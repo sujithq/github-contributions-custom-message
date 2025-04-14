@@ -8,6 +8,6 @@ You can use it to create an image for your social profiles or your CV, etc.
 
 
 
-## I use [html-to-image](https://github.com/bubkoo/html-to-image/) script to generate the images from html page.
+I used [html-to-image](https://github.com/bubkoo/html-to-image/) script to generate the images from html page.
 
 
