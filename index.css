@@ -1,0 +1,246 @@
+/* Global styles */
+html {
+  font-size: 16px;    
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0; 
+  padding: 0;
+}
+
+:root {
+  --bgColor-dark: #0d1117;
+  --color-dark: #c9d1d9;
+  --bgColor-light: #ffffff;
+  --color-light: #1f2328;
+}
+
+[theme="dark"] {
+  --bgColor: var(--bgColor-dark);
+  --color: var(--color-dark);
+  --contribution-default-bgColor-0: #151b23;
+  --contribution-default-bgColor-1: #033a16;
+  --contribution-default-bgColor-2: #196c2e;
+  --contribution-default-bgColor-3: #2ea043;
+  --contribution-default-bgColor-4: #56d364;
+  --contribution-default-borderColor: #ffffff0d;
+}
+
+[theme="light"] {
+  --bgColor: var(--bgColor-light);
+  --color: var(--color-light);
+  --contribution-default-bgColor-0: #eff2f5;
+  --contribution-default-bgColor-1: #aceebb;
+  --contribution-default-bgColor-2: #4ac26b;
+  --contribution-default-bgColor-3: #2da44e;
+  --contribution-default-bgColor-4: #116329;
+  --contribution-default-borderColor: #1f23280d;
+}
+
+body {
+  background-color: var(--bgColor);
+  color: var(--color);
+  font-family: Arial, sans-serif;
+  padding: 1.25rem;
+  margin: 0;
+  width: 100%;    
+  overflow: auto;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  max-width: calc(100% - 10rem);
+}
+
+a {
+  color: var(--color);
+  text-decoration: underline;
+  font-weight: normal;
+}
+
+footer {
+  font-size: 0.75rem;
+  color: var(--color);
+  margin-top: 1rem;
+  text-align: left;
+  padding: 1rem 0
+}
+
+label {
+  font-size: 1rem;
+  padding: 0.5rem;
+  color: var(--color);
+}
+
+input {
+  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--color);
+  background-color: var(--bgColor);
+  color: var(--color);
+}
+
+button {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--color);
+  background-color: var(--color);
+  color: var(--bgColor);
+  font-weight: bold;
+  max-width: 20rem;
+}
+
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;  
+  max-width: 40rem;
+}
+
+.input-group .input-group-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.input-group .input-group-item label {
+  width: 50%;
+  text-align: right;
+}
+
+.input-group .input-group-item input {
+  width: 50%;  
+}
+.input-group .input-group-item input.small-input {
+  width: 25%;
+}
+
+.input-group button {
+  align-self: end;
+  width: 50%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;  
+}
+
+.toggle-theme-button {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  font-size: 0.75rem;
+  font-weight: normal;
+  padding: 0.25rem 0.5rem;
+  background-color: transparent;
+}
+
+.toggle-theme-button .light-mode-icon,
+.toggle-theme-button .dark-mode-icon {
+  display: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color);
+  fill: var(--color);
+}
+
+[theme="dark"] .toggle-theme-button .light-mode-icon {
+  display: inline;
+}
+
+[theme="light"] .toggle-theme-button .dark-mode-icon {
+  display: inline;
+}
+
+.grid {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.grid-container {
+  display: flex;
+  flex-direction: row;
+  max-width: 100%;
+  overflow: auto;
+  background-color: var(--bgColor);
+  width: fit-content;
+  height: fit-content;
+}
+
+.day-labels,
+.month-labels {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.month-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.2rem;
+}
+
+.day-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-right: 0.2rem;
+  margin-top: 1.75rem;
+}
+
+.day-label,
+.month-label {
+  font-size: 0.75rem;
+  color: var(--color);
+}
+
+.square {
+  --animation-duration: 0.5s;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: var(--bgColor);
+  border: 0.1rem solid var(--contribution-default-borderColor);
+  border-radius: 0.125rem;
+  shape-rendering: geometricprecision;
+  animation: fadeIn var(--animation-duration) ease-out;
+  animation-fill-mode: both;
+}
+
+/* Add animation for squares */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-30deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.level-0 {
+  background-color: var(--contribution-default-bgColor-0);
+}
+
+.level-1 {
+  background-color: var(--contribution-default-bgColor-1);
+}
+
+.level-2 {
+  background-color: var(--contribution-default-bgColor-2);
+}
+
+.level-3 {
+  background-color: var(--contribution-default-bgColor-3);
+}
+
+.level-4 {
+  background-color: var(--contribution-default-bgColor-4);
+}
