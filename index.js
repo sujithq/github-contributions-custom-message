@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // check that all required elements are present in the DOM
     checkRequiredElements();
 
-
+    // Set up the theme toggle button
     const themeToggle = document.getElementById('theme-toggle');        
     const themeToggleClickHandler = () => {
         const html = document.documentElement;
@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     themeToggle?.addEventListener('click', themeToggleClickHandler);
         
+    // Set up the save button to save the contribution grid as an image
     const saveButton = document.getElementById('save-button');
     if (!saveButton) {        
         throw new Error('Save button (id="save-button") not found. Please ensure the save button exists in your HTML.');        
@@ -25,9 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
     saveButton.addEventListener('click', () => saveContributionGridAsImage({
         gridContainer: document.getElementById('grid-container'),
         saveButton: saveButton,
-        htmlToImage: window.htmlToImage // Assuming htmlToImage is available globally via script tag
+        // Assuming htmlToImage is available globally via script tag,
+        htmlToImage: window.htmlToImage, 
+        // Generate a file name based on the input value
+        fileName: `contribution-grid-${document.getElementById('message-input').value.toLowerCase().replace(/[^a-z0-9]/g, '')}.png` 
     }));
 
+    // Set up the form submission to generate the contribution grid
     const form = document.getElementById('form');
     if (!form) {
         throw new Error('Form (id="form") not found. Please ensure the form exists in your HTML.');
@@ -38,10 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
         generateContributionGrid(getGeneratorOptions());
     });
 
+    // generate the contribution grid on page load
     generateContributionGrid(getGeneratorOptions());
 });
 
-function getGeneratorOptions() {    
+// Function to get the generator options from the form inputs
+const getGeneratorOptions = () => {    
     return {        
         gridContainer: document.getElementById('grid-container'),
         contributionsGrid: document.getElementById('contribution-grid'),
@@ -54,7 +61,8 @@ function getGeneratorOptions() {
     };
 }
 
-function checkRequiredElements() {
+// Function to check if all required elements are present in the DOM
+const checkRequiredElements = () => {
     const requiredElements = [
         'grid-container',
         'contribution-grid',
