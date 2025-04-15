@@ -28,6 +28,7 @@ export const saveContributionGridAsImage = async (options) => {
         const dataUrl = await htmlToImage.toPng(gridContainer, {
             width: gridContainer.scrollWidth,
             height: gridContainer.scrollHeight,
+            skipFonts: true
         });
         const link = document.createElement('a');
         link.download = fileName;
