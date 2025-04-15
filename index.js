@@ -1,6 +1,27 @@
 import { generateContributionGrid  } from './features/generate/index.js'; // Import the contribution grid generator
 import { saveContributionGridAsImage } from './features/export/to-image.js'; // Import the function to save the grid as an image
 import { activateDrawMode, deactiveDrawMode } from './features/draw/index.js';
+import { shareContributionGrid } from './features/share/index.js';
+
+const valueRegExp = /[^a-zA-Z0-9!\?\-\. ]/g; // Regular expression to validate the input value
+
+
+// Extract and sanitize the default message value from the URL
+const getDefaultMessageFromURL = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    let value = urlParams.get('value') || '';
+
+    // Sanitize the value: remove any potentially harmful characters
+    value = value.replace(valueRegExp, '');
+
+    // Ensure the value is not too long
+    const maxLength = 15;
+    if (value.length > maxLength) {
+        value = value.substring(0, maxLength);
+    }
+
+    return value;
+};
 
 // generate default contribution grid
 // and set up event listeners for the theme toggle and save button
@@ -27,6 +48,27 @@ document.addEventListener('DOMContentLoaded', () => {
         fileName: `contribution-grid-${document.getElementById('message-input').value.toLowerCase().replace(/[^a-z0-9]/g, '')}.png` 
     }));
 
+    // Set up message input to update url with the current value
+    const messageInput = document.getElementById('message-input');
+    const messageInputHandler = () => {
+        const message = messageInput.value.toUpperCase().replace(valueRegExp, '');
+        if (message) {
+            window.history.replaceState(null, '', `?value=${encodeURIComponent(message)}`);
+        } else {
+            window.history.replaceState(null, '', '?value=');
+        }
+    };
+    messageInput.addEventListener('input', messageInputHandler);   
+    messageInput.addEventListener('paste', messageInputHandler);     
+    messageInput.addEventListener('cut', messageInputHandler);     
+    
+    // Set the default value for the message input field    
+    if (messageInput) {
+        const messageFromUrl = getDefaultMessageFromURL();
+        if (messageFromUrl)
+            messageInput.value = messageFromUrl; // Set the default value from the URL
+    }
+
     // Set up draw mode
     const drawMode = document.getElementById('draw-mode-input');
     drawMode.addEventListener('change', (event) => {
@@ -51,6 +93,17 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', (event) => {
         event.preventDefault(); // Prevent form submission
         generateContributionGrid(getGeneratorOptions());
+    });
+
+    // Set up the share button to share the URL or the generated image
+    const shareButton = document.getElementById('share-button');
+    shareButton.addEventListener('click', async () => {        
+        shareContributionGrid({
+            gridContainer: document.getElementById('grid-container'),
+            button: shareButton,
+            fileName: `contribution-grid-${document.getElementById('message-input').value.toLowerCase().replace(/[^a-z0-9]/g, '')}.png`,
+            htmlToImage: window.htmlToImage, // Assuming htmlToImage is available globally via script tag
+        })
     });
 
     // generate the contribution grid on page load
@@ -86,7 +139,8 @@ const checkRequiredElements = () => {
         'save-button',
         'theme-toggle', 
         'clear-button',
-        'draw-mode-input'
+        'draw-mode-input',
+        'share-button'
     ];
     for (const elementId of requiredElements) {
         if (!document.getElementById(elementId)) {

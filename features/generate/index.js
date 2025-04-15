@@ -23,6 +23,7 @@ export const generateContributionGrid = (options) => {
         creditsContainer,
         numRows,
         squareGap,
+        gridGap,
         animationDuration,
         maxInputLength,
         minInputLength        
@@ -38,6 +39,7 @@ export const generateContributionGrid = (options) => {
         creditsValue: 'github.artem.work', // Credits text input        
         numRows: 7, // Number of rows in the grid, it's 7 as the days of the week
         squareGap: 2, // Gap in squares between chars in the grid
+        gridGap: '0.625rem', // Gap between squares in the grid
         animationDuration: 0.5, // Duration of the animation for each square in seconds
         maxInputLength: 15, // Maximum length of the input message, it's limited because of the grid size (12 months)
         minInputLength: 10 // Minimum length of the input message, it's limited because of the grid size (12 months)
@@ -91,8 +93,8 @@ export const generateContributionGrid = (options) => {
 
     // Set grid styles based on calculated values
     Object.assign(contributionsGrid.style, {
-        gridTemplateRows: `repeat(${numRows}, 0.625rem)`, // Set grid row template
-        gridTemplateColumns: `repeat(${totalColumns}, 0.625rem)` // Set grid column template
+        gridTemplateRows: `repeat(${numRows}, ${gridGap})`, // Set grid row template
+        gridTemplateColumns: `repeat(${totalColumns}, ${gridGap})` // Set grid column template
     });
 
     let animationDelay = 0;
