@@ -73,9 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const drawMode = document.getElementById('draw-mode-input');
     drawMode.addEventListener('change', (event) => {
         if (event.target.checked) {
-            activateDrawMode(document.getElementById('grid-container'));
+            activateDrawMode(document.getElementById('contribution-grid'));
         } else {
-            deactiveDrawMode(document.getElementById('grid-container'));
+            deactiveDrawMode(document.getElementById('contribution-grid'));
         }
     });
 

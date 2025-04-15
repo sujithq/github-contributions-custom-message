@@ -17,40 +17,42 @@ const paintSquare = (event) => {
 };
 
 // Define reusable event handlers for touch events
-const handleTouchStart = (event) => {    
+const handleTouchStart = (event) => {        
     startDrawing();    
     paintSquare(event.touches[0]);
 };
 
-const handleTouchMove = (event) => {
-    event.preventDefault(); // Prevent default touch behavior (e.g., scrolling)
+const handleTouchMove = (event) => {    
     const touch = event.touches[0];
-    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);        
     if (element) {
         paintSquare({ target: element });
     }
+        
 };
 
 export const activateDrawMode = (grid) => {
+    grid.style.touchAction = 'none'; // Disable default touch actions to prevent scrolling
     document.addEventListener('mousedown', startDrawing);
     document.addEventListener('mouseup', stopDrawing);
     document.addEventListener('mouseleave', stopDrawing);
     document.addEventListener('mousemove', paintSquare);
-    document.addEventListener('click', paintSquare);
+    grid.addEventListener('click', paintSquare);
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
-    document.addEventListener('touchend', stopDrawing, { passive: false });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    grid.addEventListener('touchstart', handleTouchStart);
+    grid.addEventListener('touchend', stopDrawing);
+    grid.addEventListener('touchmove', handleTouchMove);
 };
 
 export const deactiveDrawMode = (grid) => {
+    grid.style.touchAction = 'auto'; // Re-enable default touch actions
     document.removeEventListener('mousedown', startDrawing);
     document.removeEventListener('mouseup', stopDrawing);
     document.removeEventListener('mouseleave', stopDrawing);
     document.removeEventListener('mousemove', paintSquare);
-    document.removeEventListener('click', paintSquare);
+    grid.removeEventListener('click', paintSquare);
 
-    document.removeEventListener('touchstart', handleTouchStart);
-    document.removeEventListener('touchend', stopDrawing);
-    document.removeEventListener('touchmove', handleTouchMove);
+    grid.removeEventListener('touchstart', handleTouchStart);
+    grid.removeEventListener('touchend', stopDrawing);
+    grid.removeEventListener('touchmove', handleTouchMove);
 };
