@@ -37,7 +37,7 @@ export const shareContributionGrid = async (options) => {
             // Convert dataUrl to Blob
             const response = await fetch(dataUrl);
             const blob = await response.blob();
-            shareOptions.file = [new File([blob], fileName, { type: 'image/png' })];
+            shareOptions.files = [new File([blob], fileName, { type: 'image/png' })];
         }
 
         if (navigator.share) {            
