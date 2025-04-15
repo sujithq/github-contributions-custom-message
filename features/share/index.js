@@ -32,7 +32,9 @@ export const shareContributionGrid = async (options) => {
             skipFonts: true
         });
 
-        
+        // Convert dataUrl to Blob
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
 
         if (navigator.share) {
             // Use Web Share API if available
@@ -40,7 +42,7 @@ export const shareContributionGrid = async (options) => {
                 title: 'Custom GitHub Contributions Grid',
                 text: 'Check out this custom GitHub contributions grid!',
                 url: url,
-                files: [new File([dataUrl], fileName, { type: 'image/png' })]
+                files: [new File([blob], fileName, { type: 'image/png' })]
             });
         } else {
             // Fallback: Copy URL to clipboard
