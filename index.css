@@ -217,6 +217,15 @@ button, input[type=submit] {
   animation-fill-mode: both;
 }
 
+/* Grid toolbar styles */
+.grid-toolbar {
+  display: flex;  
+  gap: 0.5rem;    
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0.5rem 0rem;
+}
+
 /* Grid container styles */
 .grid-container {
   display: flex;

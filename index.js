@@ -95,14 +95,22 @@ document.addEventListener('DOMContentLoaded', () => {
         generateContributionGrid(getGeneratorOptions());
     });
 
-    // Set up the share button to share the URL or the generated image
-    const shareButton = document.getElementById('share-button');
-    shareButton.addEventListener('click', async () => {        
+    // Set up the share buttons to share the URL or the generated image
+    const shareImageButton = document.getElementById('share-image-button');
+    shareImageButton.addEventListener('click', async () => {        
         shareContributionGrid({
             gridContainer: document.getElementById('grid-container'),
-            button: shareButton,
+            button: shareImageButton,
             fileName: `contribution-grid-${document.getElementById('message-input').value.toLowerCase().replace(/[^a-z0-9]/g, '')}.png`,
             htmlToImage: window.htmlToImage, // Assuming htmlToImage is available globally via script tag
+        })
+    });
+
+    const shareLinkButton = document.getElementById('share-link-button');
+    shareLinkButton.addEventListener('click', async () => {        
+        shareContributionGrid({
+            gridContainer: document.getElementById('grid-container'),
+            button: shareLinkButton            
         })
     });
 
@@ -140,7 +148,8 @@ const checkRequiredElements = () => {
         'theme-toggle', 
         'clear-button',
         'draw-mode-input',
-        'share-button'
+        'share-image-button',
+        'share-link-button'
     ];
     for (const elementId of requiredElements) {
         if (!document.getElementById(elementId)) {

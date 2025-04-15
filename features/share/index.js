@@ -6,14 +6,9 @@ export const shareContributionGrid = async (options) => {
         fileName
     } = Object.assign({
         gridContainer: document.getElementById('grid-container'),
-        button: document.getElementById('share-button'),
-        fileName: 'contribution-grid.png',
-        htmlToImage: window.htmlToImage // Assuming htmlToImage is available globally via script tag
+        button: document.getElementById('share-button')        
     }, options);
-
-    if (!htmlToImage)
-        throw new Error('htmlToImage is not available. Please include the html-to-image library using <script> tag.');
-
+    
     const buttonText = button.innerHTML;
 
     button.setAttribute('disabled', 'disabled'); // Disable the button to prevent multiple clicks        
@@ -25,25 +20,28 @@ export const shareContributionGrid = async (options) => {
         // Use setTimeout to allow the browser to render the updated UI
         await new Promise((resolve) => setTimeout(resolve, 0));
         
-        // Generate image from the grid
-        const dataUrl = await htmlToImage.toPng(gridContainer, {
-            width: gridContainer.scrollWidth,
-            height: gridContainer.scrollHeight,
-            skipFonts: true
-        });
-
-        // Convert dataUrl to Blob
-        const response = await fetch(dataUrl);
-        const blob = await response.blob();
-
-        if (navigator.share) {
-            // Use Web Share API if available
-            await navigator.share({
-                title: 'Custom GitHub Contributions Grid',
-                text: 'Check out this custom GitHub contributions grid!',
-                url: url,
-                files: [new File([blob], fileName, { type: 'image/png' })]
+        // Use Web Share API if available
+        const shareOptions = {
+            title: 'Custom GitHub Contributions Grid',
+            text: 'Check out this custom GitHub contributions grid!',
+            url: url
+        };
+        
+        if (htmlToImage && fileName) {
+            // Generate image from the grid        
+            const dataUrl = await htmlToImage.toPng(gridContainer, {
+                width: gridContainer.scrollWidth,
+                height: gridContainer.scrollHeight,
+                skipFonts: true                
             });
+            // Convert dataUrl to Blob
+            const response = await fetch(dataUrl);
+            const blob = await response.blob();
+            shareOptions.file = [new File([blob], fileName, { type: 'image/png' })];
+        }
+
+        if (navigator.share) {            
+            await navigator.share(shareOptions);
         } else {
             // Fallback: Copy URL to clipboard
             await navigator.clipboard.writeText(url);

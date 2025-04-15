@@ -5,7 +5,7 @@ const startDrawing = () => {
 };
 
 const stopDrawing = () => {
-    isDrawing = false;    
+    isDrawing = false;        
 };
 
 const paintSquare = (event) => {    
@@ -17,13 +17,18 @@ const paintSquare = (event) => {
 };
 
 // Define reusable event handlers for touch events
-const handleTouchStart = (event) => {
-    startDrawing();
+const handleTouchStart = (event) => {    
+    startDrawing();    
     paintSquare(event.touches[0]);
 };
 
 const handleTouchMove = (event) => {
-    paintSquare(event.touches[0]);
+    event.preventDefault(); // Prevent default touch behavior (e.g., scrolling)
+    const touch = event.touches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (element) {
+        paintSquare({ target: element });
+    }
 };
 
 export const activateDrawMode = (grid) => {
@@ -33,9 +38,9 @@ export const activateDrawMode = (grid) => {
     document.addEventListener('mousemove', paintSquare);
     document.addEventListener('click', paintSquare);
 
-    document.addEventListener('touchstart', handleTouchStart);
-    document.addEventListener('touchend', stopDrawing);
-    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchend', stopDrawing, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
 };
 
 export const deactiveDrawMode = (grid) => {
