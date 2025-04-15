@@ -1,5 +1,15 @@
 import { charMatrixMap } from './chars.js'; // Import the character matrix map
 
+// Extracted helper function for speed normalization
+const normalizeSpeed = (speed) => Math.max(0, Math.min(10, speed)) / 1000;
+
+// Extracted helper function for padding a phrase
+const padPhrase = (phrase, minInputLength) => {
+    const spacesToAdd = Math.max(0, minInputLength - phrase.length);
+    const padding = ' '.repeat(Math.ceil(spacesToAdd / 2));
+    return padding + phrase + padding;
+};
+
 export const generateContributionGrid = (options) => {    
     let {
         letters,
@@ -34,25 +44,27 @@ export const generateContributionGrid = (options) => {
     }, options);
 
     if (!gridContainer) {
-        throw new Error('Argument error: gridContainer is not defined.');
+        throw new Error('Argument error: gridContainer is not defined. Please ensure the grid container element exists.');
     }
     if (!contributionsGrid) {
-        throw new Error('Argument error: contributionsGrid is not defined.');
+        throw new Error('Argument error: contributionsGrid is not defined. Please ensure the contributions grid element exists.');
     }
     if (!creditsContainer)  {
-        throw new Error('Argument error: creditsContainer is not defined.');
+        throw new Error('Argument error: creditsContainer is not defined. Please ensure the credits container element exists.');
     }
 
-    const speedFactor = Math.max(0, Math.min(10, speed)) / 1000; // Normalize speed to a factor between 0 and 0.01
+    const speedFactor = normalizeSpeed(speed); // Normalize speed using helper function
     
     creditsContainer.innerHTML = creditsValue; // Update credits text 
     creditsContainer.style.display = creditsValue ? 'block' : 'none'; // Show or hide credits based on input
 
     // Set grid container padding based on user input
-    gridContainer.style.paddingLeft = `${paddingX}px`;
-    gridContainer.style.paddingRight = `${paddingX}px`;
-    gridContainer.style.paddingTop = `${paddingY}px`;
-    gridContainer.style.paddingBottom = `${paddingY}px`;
+    Object.assign(gridContainer.style, {
+        paddingLeft: `${paddingX}px`,
+        paddingRight: `${paddingX}px`,
+        paddingTop: `${paddingY}px`,
+        paddingBottom: `${paddingY}px`
+    });
 
     let phrase = '';
     for (const char of message.toUpperCase()) { // Convert message to uppercase and iterate through each character
@@ -63,13 +75,10 @@ export const generateContributionGrid = (options) => {
             break; // Limit to max input length
         }
     }
-    // if the phrase is shorter than the minimum length,
-    // add spaces to the beginning and end of the phrase
-    // to make it look centered in the grid
+
+    // Pad the phrase to meet minimum length using helper function
     if (phrase.length < minInputLength) {
-        const spacesToAdd = Math.max(0, minInputLength - phrase.length);
-        const padding = ' '.repeat(Math.ceil(spacesToAdd / 2));
-        phrase = padding + phrase + padding; // Add padding to meet minimum length
+        phrase = padPhrase(phrase, minInputLength);
     }
 
     contributionsGrid.innerHTML = ''; // Clear previous grid
@@ -81,8 +90,10 @@ export const generateContributionGrid = (options) => {
     totalColumns = Math.max(0, totalColumns - squareGap); // Remove trailing space
 
     // Set grid styles based on calculated values
-    contributionsGrid.style.gridTemplateRows = `repeat(${numRows}, 0.625rem)`; // Set grid row template
-    contributionsGrid.style.gridTemplateColumns = `repeat(${totalColumns}, 0.625rem)`; // Set grid column template
+    Object.assign(contributionsGrid.style, {
+        gridTemplateRows: `repeat(${numRows}, 0.625rem)`, // Set grid row template
+        gridTemplateColumns: `repeat(${totalColumns}, 0.625rem)` // Set grid column template
+    });
 
     let animationDelay = 0;
     // draw the chars line by line

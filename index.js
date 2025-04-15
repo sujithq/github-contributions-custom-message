@@ -1,5 +1,6 @@
-import { generateContributionGrid  } from './generator.js'; // Import the contribution grid generator
-import { saveContributionGridAsImage } from './contribution-grid-to-image.js'; // Import the function to save the grid as an image
+import { generateContributionGrid  } from './features/generate/index.js'; // Import the contribution grid generator
+import { saveContributionGridAsImage } from './features/export/to-image.js'; // Import the function to save the grid as an image
+import { activateDrawMode, deactiveDrawMode } from './features/draw/index.js';
 
 // generate default contribution grid
 // and set up event listeners for the theme toggle and save button
@@ -16,13 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle?.addEventListener('click', themeToggleClickHandler);
         
     // Set up the save button to save the contribution grid as an image
-    const saveButton = document.getElementById('save-button');
-    if (!saveButton) {        
-        throw new Error('Save button (id="save-button") not found. Please ensure the save button exists in your HTML.');        
-    }
-    if (!document.getElementById('grid-container')) {
-        throw new Error('Grid container (id="grid-container") not found. Please ensure the grid container exists in your HTML.');        
-    }
+    const saveButton = document.getElementById('save-button');    
     saveButton.addEventListener('click', () => saveContributionGridAsImage({
         gridContainer: document.getElementById('grid-container'),
         saveButton: saveButton,
@@ -32,12 +27,27 @@ document.addEventListener('DOMContentLoaded', () => {
         fileName: `contribution-grid-${document.getElementById('message-input').value.toLowerCase().replace(/[^a-z0-9]/g, '')}.png` 
     }));
 
-    // Set up the form submission to generate the contribution grid
-    const form = document.getElementById('form');
-    if (!form) {
-        throw new Error('Form (id="form") not found. Please ensure the form exists in your HTML.');
-    }
+    // Set up draw mode
+    const drawMode = document.getElementById('draw-mode-input');
+    drawMode.addEventListener('change', (event) => {
+        if (event.target.checked) {
+            activateDrawMode(document.getElementById('grid-container'));
+        } else {
+            deactiveDrawMode(document.getElementById('grid-container'));
+        }
+    });
 
+    // Set up clear button
+    const clearButton = document.getElementById('clear-button');
+    clearButton.addEventListener('click', (event) => {                
+        const squares = document.querySelectorAll('#contribution-grid .square');
+        squares.forEach(square => {
+            square.className = `square level-${Math.floor(Math.random() * 2)}`; 
+        });
+    });
+
+    // Set up the form submission to generate the contribution grid
+    const form = document.getElementById('form');    
     form.addEventListener('submit', (event) => {
         event.preventDefault(); // Prevent form submission
         generateContributionGrid(getGeneratorOptions());
@@ -71,7 +81,12 @@ const checkRequiredElements = () => {
         'padding-x-input',
         'padding-y-input',
         'credits-input',
-        'credits'
+        'credits',
+        'form',
+        'save-button',
+        'theme-toggle', 
+        'clear-button',
+        'draw-mode-input'
     ];
     for (const elementId of requiredElements) {
         if (!document.getElementById(elementId)) {

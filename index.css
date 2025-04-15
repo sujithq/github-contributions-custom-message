@@ -3,12 +3,27 @@ html {
   font-size: 16px;    
 }
 
+input, button, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background-color: inherit;  
+}
+
+/* Reset styles */
 * {
   box-sizing: border-box;
   margin: 0; 
   padding: 0;
 }
 
+/* Disabled styles */
+[disabled] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Theme variables */
 :root {
   --bgColor-dark: #0d1117;
   --color-dark: #c9d1d9;
@@ -16,6 +31,7 @@ html {
   --color-light: #1f2328;
 }
 
+/* Dark theme styles */
 [theme="dark"] {
   --bgColor: var(--bgColor-dark);
   --color: var(--color-dark);
@@ -27,6 +43,7 @@ html {
   --contribution-default-borderColor: #ffffff0d;
 }
 
+/* Light theme styles */
 [theme="light"] {
   --bgColor: var(--bgColor-light);
   --color: var(--color-light);
@@ -38,42 +55,54 @@ html {
   --contribution-default-borderColor: #1f23280d;
 }
 
+/* Body styles */
 body {
   background-color: var(--bgColor);
   color: var(--color);
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
+  font-weight: 300;
   padding: 1.25rem;
   margin: 0;
-  width: 100%;    
+  width: 100%;   
+  max-width: 1000px; 
   overflow: auto;
+  margin: 0 auto;
 }
 
+/* Heading styles */
 h1 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  max-width: calc(100% - 10rem);
+  max-width: calc(100% - 5rem);
 }
 
+/* Link styles */
 a {
   color: var(--color);
   text-decoration: underline;
   font-weight: normal;
 }
 
+/* Footer styles */
 footer {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--color);
   margin-top: 1rem;
   text-align: left;
-  padding: 1rem 0
+  padding: 1rem 0;
+  display: block;
+  text-align: center;  
+  line-height: 1.4rem;    
 }
 
+/* Label styles */
 label {
   font-size: 1rem;
   padding: 0.5rem;
   color: var(--color);
 }
 
+/* Input styles */
 input {
   font-size: 1rem;
   padding: 0.5rem 0.75rem;
@@ -83,6 +112,7 @@ input {
   color: var(--color);
 }
 
+/* Button styles */
 button, input[type=submit] {
   font-size: 1rem;
   padding: 0.5rem 1rem;
@@ -94,7 +124,7 @@ button, input[type=submit] {
   max-width: 20rem;
 }
 
-
+/* Input group styles */
 .input-group {
   display: flex;
   gap: 0.5rem;
@@ -117,6 +147,10 @@ button, input[type=submit] {
   width: 50%;  
 }
 
+.input-group .input-group-item input[type=checkbox] {
+  width: auto;
+}
+
 .input-group .input-group-item .inputs-container {
   display: flex;
   gap: 0.5rem;
@@ -128,6 +162,7 @@ button, input[type=submit] {
   width: 50%;
 }
 
+/* Container styles */
 .container {
   display: flex;
   flex-direction: column;
@@ -135,6 +170,7 @@ button, input[type=submit] {
   width: 100%;  
 }
 
+/* Toggle theme button styles */
 .toggle-theme-button {
   position: absolute;
   top: 1.25rem;
@@ -162,16 +198,26 @@ button, input[type=submit] {
   display: inline;
 }
 
-[disabled] {
-  pointer-events: none;
-  opacity: 0.5;
-}
 
+/* Grid styles */
 .grid {
   display: grid;
-  gap: 0.18rem;
+  gap: 0.187rem;
 }
 
+.square {
+  --animation-duration: 0.5s;
+  width: 0.6rem;
+  height: 0.6rem;
+  background-color: var(--bgColor);
+  border: 0.1rem solid var(--contribution-default-borderColor);
+  border-radius: 0.125rem;
+  shape-rendering: geometricprecision;
+  animation: fadeIn var(--animation-duration) ease-out;
+  animation-fill-mode: both;
+}
+
+/* Grid container styles */
 .grid-container {
   display: flex;
   flex-direction: row;
@@ -180,25 +226,31 @@ button, input[type=submit] {
   background-color: var(--bgColor);
   width: fit-content;
   height: fit-content;
+  font-size: 0.9rem;
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
+  font-weight: normal;
 }
 
 .grid-container-inner {
   display: flex;
   flex-direction: column;  
+  font-family: inherit;
 }
 
 .grid-container .credits {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   color: var(--color);
-  opacity: 0.7;
+  opacity: 0.8;
   text-align: center;
-  margin-top: 0.2rem;
+  margin-top: 0.5rem;
+  font-family: inherit;
 }
 
+/* Day and month label styles */
 .day-labels,
 .month-labels {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.75rem;  
 }
 
 .month-labels {
@@ -211,7 +263,7 @@ button, input[type=submit] {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-right: 0.2rem;
+  margin-right: 0.4rem;
   margin-top: 1.65rem;
 }
 
@@ -219,18 +271,6 @@ button, input[type=submit] {
 .month-label {
   font-size: 0.75rem;
   color: var(--color);
-}
-
-.square {
-  --animation-duration: 0.5s;
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: var(--bgColor);
-  border: 0.1rem solid var(--contribution-default-borderColor);
-  border-radius: 0.125rem;
-  shape-rendering: geometricprecision;
-  animation: fadeIn var(--animation-duration) ease-out;
-  animation-fill-mode: both;
 }
 
 /* Add animation for squares */
@@ -246,6 +286,7 @@ button, input[type=submit] {
   }
 }
 
+/* Contribution levels */
 .level-0 {
   background-color: var(--contribution-default-bgColor-0);
 }
@@ -264,4 +305,22 @@ button, input[type=submit] {
 
 .level-4 {
   background-color: var(--contribution-default-bgColor-4);
+}
+
+/* Contribution description styles */
+.contribution-description {
+  font-size: 1rem;
+  color: var(--color);  
+  padding: 2rem 0rem;
+  text-align: left;  
+}
+
+.contribution-description h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 2rem 0rem 0.5rem 0rem;
+}
+
+.contribution-description p {
+  margin: 1rem 0rem;
 }
