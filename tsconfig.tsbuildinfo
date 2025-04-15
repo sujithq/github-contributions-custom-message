@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/vite-env.d.ts","./src/features/draw/index.ts","./src/features/export/to-image.ts","./src/features/generate/chars.ts","./src/features/generate/index.ts","./src/features/share/index.ts"],"version":"5.7.3"}

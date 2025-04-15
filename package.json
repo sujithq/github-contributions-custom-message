@@ -1,0 +1,34 @@
+{
+    "name": "github-contributions-custom-message-vite",
+    "public": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "test": "vitest",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "format": "prettier src/**/*.* --write",
+        "typecheck": "tsc -b"
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^6.6.3",
+        "@types/node": "^22.14.1",
+        "autoprefixer": "^10.4.21",
+        "eslint": "^9.24.0",
+        "eslint-config-prettier": "^10.1.2",
+        "eslint-plugin-prettier": "^5.2.6",
+        "jsdom": "^26.1.0",
+        "prettier": "^3.5.3",
+        "prettier-plugin-organize-imports": "^4.1.0",
+        "typescript": "~5.7.2",
+        "typescript-eslint": "^8.30.1",
+        "vite": "^6.2.0",
+        "vitest": "^3.1.1"
+    },
+    "dependencies": {
+        "html-to-image": "^1.11.13"
+    }
+}
