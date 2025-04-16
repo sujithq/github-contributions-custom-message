@@ -1,5 +1,5 @@
 // Letter, digits and some special chars templates (7 rows high) - 5 columns wide
-export const charMatrixMap = {
+export const charMatrixMap: Record<string, number[][]> = {
     A: [
         [0, 1, 1, 1, 0],
         [1, 0, 0, 0, 1],

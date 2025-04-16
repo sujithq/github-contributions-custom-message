@@ -8,7 +8,6 @@ export const saveContributionGridAsImage = async (options: {
     fileName: string;
 }) => {
     const { gridContainer, saveButton, fileName = 'contribution-grid.png' } = options;
-
     const saveButtonText = saveButton.innerHTML;
 
     try {

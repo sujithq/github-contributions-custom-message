@@ -1,27 +1,29 @@
-import { charMatrixMap } from './chars.js'; // Import the character matrix map
+import { charMatrixMap } from '@/features/generate/char-matrix-map';
 
 // Extracted helper function for speed normalization
 const normalizeSpeed = (speed: number) => Math.max(0, Math.min(10, speed)) / 1000;
 
+const whitespace = ' ';
+
 // Extracted helper function for padding a phrase
 const padPhrase = (phrase: string, minInputLength: number) => {
     const spacesToAdd = Math.max(0, minInputLength - phrase.length);
-    const padding = ' '.repeat(Math.ceil(spacesToAdd / 2));
+    const padding = whitespace.repeat(Math.ceil(spacesToAdd / 2));
     return padding + phrase + padding;
 };
 
 interface GenerateContributionGridOptions {
-    letters?: Record<string, number[][]>; // Map of characters to their grid representations
     gridContainer: HTMLElement; // Main container for the grid
     contributionsGrid: HTMLElement; // Grid element where contributions are displayed
     creditsContainer: HTMLElement; // Container for displaying credits
     message: string; // User input message
+    letters: Record<string, number[][]>; // Map of characters to their grid representations
     speed?: number; // Animation speed
-    paddingX: number; // Horizontal padding for the grid
-    paddingY: number; // Vertical padding for the grid
+    paddingX?: number; // Horizontal padding for the grid
+    paddingY?: number; // Vertical padding for the grid
     creditsValue?: string; // Credits text input
     numRows?: number; // Number of rows in the grid
-    squareGap?: number; // Gap in squares between chars in the grid
+    charGap?: number; // Gap in squares between chars in the grid
     gridGap?: string; // Gap between squares in the grid
     animationDuration?: number; // Duration of the animation for each square in seconds
     maxInputLength?: number; // Maximum length of the input message
@@ -30,57 +32,22 @@ interface GenerateContributionGridOptions {
 
 export const generateContributionGrid = (options: GenerateContributionGridOptions) => {
     const {
-        letters,
         gridContainer,
         contributionsGrid,
-        message,
-        speed,
-        paddingX,
-        paddingY,
-        creditsValue,
         creditsContainer,
-        numRows,
-        squareGap,
-        gridGap,
-        animationDuration,
-        maxInputLength,
-        minInputLength,
-    } = Object.assign(
-        {
-            letters: charMatrixMap, // Map of characters to their grid representations
-            gridContainer: document.getElementById('grid-container'), // Main container for the grid
-            contributionsGrid: document.getElementById('contribution-grid'), // Grid element where contributions are displayed
-            creditsContainer: document.getElementById('credits'), // Container for displaying credits
-            message: 'HI THERE', // User input message
-            speed: 3, // Animation speed
-            paddingX: 20, // Horizontal padding for the grid
-            paddingY: 20, // Vertical padding for the grid
-            creditsValue: 'github.artem.work', // Credits text input
-            numRows: 7, // Number of rows in the grid, it's 7 as the days of the week
-            squareGap: 2, // Gap in squares between chars in the grid
-            gridGap: '0.625rem', // Gap between squares in the grid
-            animationDuration: 0.5, // Duration of the animation for each square in seconds
-            maxInputLength: 15, // Maximum length of the input message, it's limited because of the grid size (12 months)
-            minInputLength: 10, // Minimum length of the input message, it's limited because of the grid size (12 months)
-        },
-        options
-    );
-
-    if (!gridContainer) {
-        throw new Error(
-            'Argument error: gridContainer is not defined. Please ensure the grid container element exists.'
-        );
-    }
-    if (!contributionsGrid) {
-        throw new Error(
-            'Argument error: contributionsGrid is not defined. Please ensure the contributions grid element exists.'
-        );
-    }
-    if (!creditsContainer) {
-        throw new Error(
-            'Argument error: creditsContainer is not defined. Please ensure the credits container element exists.'
-        );
-    }
+        letters = charMatrixMap,
+        message = 'HI THERE',
+        creditsValue = 'github.artem.work',
+        speed = 3,
+        paddingX = 20,
+        paddingY = 20,
+        numRows = 7,
+        charGap = 2,
+        gridGap = '0.625rem',
+        animationDuration = 0.5,
+        maxInputLength = 15,
+        minInputLength = 10,
+    } = options;
 
     const speedFactor = normalizeSpeed(speed); // Normalize speed using helper function
 
@@ -98,7 +65,7 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
     let phrase = '';
     for (const char of message.toUpperCase()) {
         // Convert message to uppercase and iterate through each character
-        if (letters[char]) {
+        if (letters[char] && letters[char].length > 0) {
             // Only include characters that exist in the character map
             phrase += char;
         }
@@ -108,7 +75,7 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
     }
 
     // Pad the phrase to meet minimum length using helper function
-    if (phrase.length < minInputLength) {
+    if (phrase.length < minInputLength && letters[whitespace]) {
         phrase = padPhrase(phrase, minInputLength);
     }
 
@@ -116,9 +83,9 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
     let totalColumns = 0;
     // calculate the total number of columns needed for the grid
     for (const char of phrase) {
-        totalColumns += letters[char][0].length + squareGap; // Add character width and spacing
+        totalColumns += letters[char][0].length + charGap; // Add character width and spacing
     }
-    totalColumns = Math.max(0, totalColumns - squareGap); // Remove trailing space
+    totalColumns = Math.max(0, totalColumns - charGap); // Remove trailing space
 
     // Set grid styles based on calculated values
     Object.assign(contributionsGrid.style, {
@@ -145,7 +112,7 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
             if (letterCol >= letterTemplate[0].length) {
                 square.classList.add(`level-${Math.floor(Math.random() * 2)}`); // Assign random level for spacing
                 contributionsGrid.appendChild(square); // Add square to the grid
-                if (letterCol >= letterTemplate[0].length + squareGap - 1) {
+                if (letterCol >= letterTemplate[0].length + charGap - 1) {
                     letterCol = 0;
                     currentLetter++;
                 } else {
@@ -167,20 +134,29 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
         letterCol = 0; // Reset column index for the next row
     }
 
-    generateLabels(); // Generate labels for the grid
+    generateLabels({
+        dayLabelsContainer: gridContainer.querySelector('#day-labels') as HTMLElement, // Get the day labels container
+        monthLabelsContainer: gridContainer.querySelector('#month-labels') as HTMLElement, // Get the month labels container
+    });
 };
 
-const generateLabels = () => {
-    const dayLabels = ['Mon', 'Wed', 'Fri']; // Labels for days
-    const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // Labels for months
+const generateLabels = ({
+    dayLabels = ['Mon', 'Wed', 'Fri'], // Default labels for days
+    monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // Default labels for months
+    dayLabelsContainer,
+    monthLabelsContainer,
+}: {
+    dayLabels?: string[]; // Optional custom labels for days
+    monthLabels?: string[]; // Optional custom labels for months
+    dayLabelsContainer?: HTMLElement; // Optional container for day labels
+    monthLabelsContainer?: HTMLElement; // Optional container for month labels
+}) => {
     const currentMonth = new Date().getMonth(); // Get the current month index
-
-    const dayLabelsContainer = document.getElementById('day-labels') as HTMLElement; // Container for day labels
-    const monthLabelsContainer = document.getElementById('month-labels') as HTMLElement; // Container for month labels
-
-    dayLabelsContainer.innerHTML = dayLabels.map((day) => `<div class="day-label">${day}</div>`).join(''); // Generate day labels
-    monthLabelsContainer.innerHTML = Array.from({ length: 12 }, (_, i) => {
-        const month = monthLabels[(currentMonth + i) % 12]; // Calculate month label based on current month
-        return `<div class="month-label">${month}</div>`;
-    }).join(''); // Generate month labels
+    if (dayLabelsContainer && monthLabelsContainer) {
+        dayLabelsContainer.innerHTML = dayLabels.map((day) => `<div class="day-label">${day}</div>`).join(''); // Generate day labels
+        monthLabelsContainer.innerHTML = Array.from({ length: 12 }, (_, i) => {
+            const month = monthLabels[(currentMonth + i) % 12]; // Calculate month label based on current month
+            return `<div class="month-label">${month}</div>`;
+        }).join(''); // Generate month labels
+    }
 };

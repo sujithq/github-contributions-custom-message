@@ -8,10 +8,10 @@ const stopDrawing = () => {
     isDrawing = false;
 };
 
-type PaintSquareEvent = MouseEvent | TouchEvent | { target: EventTarget | null };
+type PaintSquareEvent = MouseEvent | TouchEvent | { target: EventTarget | null; type: string };
 
 const paintSquare = (event: PaintSquareEvent) => {
-    if (!isDrawing && 'type' in event && event.type != 'click') return;
+    if (!isDrawing && event.type != 'click') return;
     const square = event.target as HTMLElement;
     if (square?.classList.contains('square')) {
         square.className = `square ${Math.random() > 0.5 ? 'level-3' : 'level-4'}`;
@@ -28,7 +28,7 @@ const handleTouchMove = (event: TouchEvent) => {
     const touch = event.touches[0];
     const element = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement;
     if (element) {
-        paintSquare({ target: element });
+        paintSquare({ target: element, type: 'touchmove' });
     }
 };
 

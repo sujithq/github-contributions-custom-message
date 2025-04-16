@@ -5,13 +5,7 @@ export const shareContributionGrid = async (options: {
     button: HTMLButtonElement;
     fileName?: string; // Optional file name for the image
 }) => {
-    const { gridContainer, button, fileName } = Object.assign(
-        {
-            gridContainer: document.getElementById('grid-container'),
-            button: document.getElementById('share-button'),
-        },
-        options
-    );
+    const { gridContainer, button, fileName } = options;
 
     const buttonText = button.innerHTML;
 
@@ -56,7 +50,7 @@ export const shareContributionGrid = async (options: {
             await navigator.clipboard.writeText(url);
             alert('URL copied to clipboard!');
         }
-    } catch (error: unknown) {        
+    } catch (error: unknown) {
         if (error instanceof Error && error.name === 'AbortError') {
             // do nothing
         } else {

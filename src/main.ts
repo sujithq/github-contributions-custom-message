@@ -1,33 +1,22 @@
 import { activateDrawMode, deactiveDrawMode } from '@/features/draw/index';
 import { saveContributionGridAsImage } from '@/features/export/to-image';
+import { charMatrixMap } from '@/features/generate/char-matrix-map';
 import { generateContributionGrid } from '@/features/generate/index';
 import { shareContributionGrid } from '@/features/share';
-
-const valueRegExp = /[^a-zA-Z0-9!?\-. ]/g;
-
-const getDefaultMessageFromURL = (): string => {
-    const urlParams = new URLSearchParams(window.location.search);
-    let value = urlParams.get('value') || '';
-
-    value = value.replace(valueRegExp, '');
-
-    const maxLength = 15;
-    if (value.length > maxLength) {
-        value = value.substring(0, maxLength);
-    }
-
-    return value;
-};
+import { getValueFromURL, setValueInURL } from '@/features/value-from-url';
+import { sanitizeInput } from '@/utils/sanitizer';
 
 document.addEventListener('DOMContentLoaded', () => {
     checkRequiredElements();
 
+    // setup theme toggle
     const themeToggle = document.getElementById('theme-toggle');
     themeToggle?.addEventListener('click', () => {
         const html = document.documentElement;
         html.setAttribute('theme', html.getAttribute('theme') === 'dark' ? 'light' : 'dark');
     });
 
+    // setup save button
     const saveButton = document.getElementById('save-button') as HTMLButtonElement;
     const messageInput = document.getElementById('message-input') as HTMLInputElement;
 
@@ -39,32 +28,33 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     );
 
+    // update url when message input changes
     const messageInputHandler = () => {
-        const message = messageInput.value.toUpperCase().replace(valueRegExp, '');
-        if (message) {
-            window.history.replaceState(null, '', `?value=${encodeURIComponent(message)}`);
-        } else {
-            window.history.replaceState(null, '', '?value=');
-        }
+        const message = sanitizeInput(messageInput.value.toUpperCase());
+        setValueInURL(message);
     };
     messageInput.addEventListener('input', messageInputHandler);
     messageInput.addEventListener('paste', messageInputHandler);
     messageInput.addEventListener('cut', messageInputHandler);
 
+    // set initial value from url
     if (messageInput) {
-        const messageFromUrl = getDefaultMessageFromURL();
+        const messageFromUrl = sanitizeInput(getValueFromURL());
         if (messageFromUrl) messageInput.value = messageFromUrl;
     }
 
+    // setup draw mode handler
     const drawMode = document.getElementById('draw-mode-input') as HTMLInputElement;
-    drawMode.addEventListener('change', (event) => {
+    const constributionGrid = document.getElementById('contribution-grid') as HTMLElement;
+    drawMode?.addEventListener('change', (event) => {
         if ((event.target as HTMLInputElement).checked) {
-            activateDrawMode(document.getElementById('contribution-grid') as HTMLElement);
+            activateDrawMode(constributionGrid);
         } else {
-            deactiveDrawMode(document.getElementById('contribution-grid') as HTMLElement);
+            deactiveDrawMode(constributionGrid);
         }
     });
 
+    // setup clear button handler
     const clearButton = document.getElementById('clear-button');
     clearButton?.addEventListener('click', () => {
         const squares = document.querySelectorAll('#contribution-grid .square');
@@ -73,16 +63,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // generate contribution grid on form submit
     const form = document.getElementById('form');
     form?.addEventListener('submit', (event) => {
         event.preventDefault();
         generateContributionGrid(getGeneratorOptions());
     });
 
+    // setup share button handlers
+    const gridContainer = document.getElementById('grid-container') as HTMLElement;
     const shareImageButton = document.getElementById('share-image-button');
     shareImageButton?.addEventListener('click', async () => {
         shareContributionGrid({
-            gridContainer: document.getElementById('grid-container') as HTMLElement,
+            gridContainer: gridContainer,
             button: shareImageButton as HTMLButtonElement,
             fileName: `contribution-grid-${messageInput.value.toLowerCase().replace(/[^a-z0-9]/g, '')}.png`,
         });
@@ -91,22 +84,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const shareLinkButton = document.getElementById('share-link-button');
     shareLinkButton?.addEventListener('click', async () => {
         shareContributionGrid({
-            gridContainer: document.getElementById('grid-container') as HTMLElement,
+            gridContainer: gridContainer,
             button: shareLinkButton as HTMLButtonElement,
         });
     });
 
+    // generate contribution grid on page load
     generateContributionGrid(getGeneratorOptions());
 });
 
 const getGeneratorOptions = () => {
     return {
+        letters: charMatrixMap,
         gridContainer: document.getElementById('grid-container') as HTMLElement,
         contributionsGrid: document.getElementById('contribution-grid') as HTMLElement,
         message: (document.getElementById('message-input') as HTMLInputElement).value.toUpperCase(),
-        speed: parseInt((document.getElementById('speed-input') as HTMLInputElement).value),
-        paddingX: parseInt((document.getElementById('padding-x-input') as HTMLInputElement).value),
-        paddingY: parseInt((document.getElementById('padding-y-input') as HTMLInputElement).value),
+        speed: parseInt((document.getElementById('speed-input') as HTMLInputElement)?.value),
+        paddingX: parseInt((document.getElementById('padding-x-input') as HTMLInputElement)?.value),
+        paddingY: parseInt((document.getElementById('padding-y-input') as HTMLInputElement)?.value),
         creditsValue: (document.getElementById('credits-input') as HTMLInputElement).value,
         creditsContainer: document.getElementById('credits') as HTMLElement,
     };
@@ -117,18 +112,10 @@ const checkRequiredElements = () => {
         'grid-container',
         'contribution-grid',
         'message-input',
-        'speed-input',
-        'padding-x-input',
-        'padding-y-input',
         'credits-input',
         'credits',
         'form',
         'save-button',
-        'theme-toggle',
-        'clear-button',
-        'draw-mode-input',
-        'share-image-button',
-        'share-link-button',
     ];
     for (const elementId of requiredElements) {
         if (!document.getElementById(elementId)) {
