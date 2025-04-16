@@ -105,6 +105,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // add handlers to generate the grid on input change
+    const inputs = [
+        'message-input',
+        'speed-input',
+        'padding-x-input',
+        'padding-y-input',
+        'credits-input',
+        'fill-empty-squares-input',
+    ];    
+    const debounce = (func: () => void, delay: number) => {
+        let timeoutId: number | undefined;
+        return () => {
+            clearTimeout(timeoutId);
+            timeoutId = window.setTimeout(() => func(), delay);
+        };
+    };
+    const inputChangeHandler = debounce(() => {
+        generateContributionGrid(getGeneratorOptions());
+    }, 500);
+    inputs.forEach((inputId) => {
+        const input = document.getElementById(inputId) as HTMLInputElement;
+        input?.addEventListener('input', inputChangeHandler);
+    });
+
     // generate contribution grid on page load
     generateContributionGrid(getGeneratorOptions());
 });
