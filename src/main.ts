@@ -31,17 +31,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // update url when message input changes
     const messageInputHandler = () => {
         const message = sanitizeInput(messageInput.value.toUpperCase());
-        setValueInURL(message);
+        setValueInURL('value', message);
     };
     messageInput.addEventListener('input', messageInputHandler);
     messageInput.addEventListener('paste', messageInputHandler);
     messageInput.addEventListener('cut', messageInputHandler);
 
-    // set initial value from url
+    // set initial values from url
     if (messageInput) {
-        const messageFromUrl = sanitizeInput(getValueFromURL());
+        const messageFromUrl = sanitizeInput(getValueFromURL('value'));
         if (messageFromUrl) messageInput.value = messageFromUrl;
     }
+
+    // update url when fill-empty-squares input changes
+    const fillEmptySquaresInput = document.getElementById('fill-empty-squares-input') as HTMLInputElement;
+    if (fillEmptySquaresInput) {
+        fillEmptySquaresInput.addEventListener('change', () => {
+            const fillEmptySquares = fillEmptySquaresInput.checked;
+            setValueInURL('fillemptysquares', fillEmptySquares ? 'true' : 'false');
+        });
+        
+        const fillEmptySquaresFromUrl = getValueFromURL('fillemptysquares');
+        if (fillEmptySquaresFromUrl) {
+            fillEmptySquaresInput.checked = fillEmptySquaresFromUrl === 'true';
+        }        
+    }
+    
 
     // setup draw mode handler
     const drawMode = document.getElementById('draw-mode-input') as HTMLInputElement;
@@ -58,8 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearButton = document.getElementById('clear-button');
     clearButton?.addEventListener('click', () => {
         const squares = document.querySelectorAll('#contribution-grid .square');
+        const fillEmptySquares = (document.getElementById('fill-empty-squares-input') as HTMLInputElement)?.checked;
         squares.forEach((square) => {
-            square.className = `square level-${Math.floor(Math.random() * 2)}`;
+            square.className = `square level-${fillEmptySquares ? Math.floor(Math.random() * 2) : 0}`;
         });
     });
 
@@ -102,7 +118,7 @@ const getGeneratorOptions = () => {
         speed: parseInt((document.getElementById('speed-input') as HTMLInputElement)?.value),
         paddingX: parseInt((document.getElementById('padding-x-input') as HTMLInputElement)?.value),
         paddingY: parseInt((document.getElementById('padding-y-input') as HTMLInputElement)?.value),
-        isLowActivityFilled: !(document.getElementById('no-low-activity-input') as HTMLInputElement)?.checked,
+        fillEmptySquares: (document.getElementById('fill-empty-squares-input') as HTMLInputElement)?.checked,
         creditsValue: (document.getElementById('credits-input') as HTMLInputElement).value,
         creditsContainer: document.getElementById('credits') as HTMLElement,
     };

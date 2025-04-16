@@ -25,7 +25,7 @@ interface GenerateContributionGridOptions {
     numRows?: number; // Number of rows in the grid
     charGap?: number; // Gap in squares between chars in the grid
     gridGap?: string; // Gap between squares in the grid
-    isLowActivityFilled?: boolean; // Flag to fill low activity squares
+    fillEmptySquares?: boolean; // Flag to fill empty squares with random low contrast color
     animationDuration?: number; // Duration of the animation for each square in seconds
     maxInputLength?: number; // Maximum length of the input message
     minInputLength?: number; // Minimum length of the input message
@@ -45,7 +45,7 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
         numRows = 7,
         charGap = 2,
         gridGap = '0.625rem',
-        isLowActivityFilled = true,
+        fillEmptySquares = true,
         animationDuration = 0.5,
         maxInputLength = 15,
         minInputLength = 10,
@@ -112,7 +112,7 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
             // when the letter line is done,
             // add spacing and move to the next letter
             if (letterCol >= letterTemplate[0].length) {
-                square.classList.add(`level-${isLowActivityFilled ? Math.floor(Math.random() * 2) : 0}`); // Assign random level for spacing
+                square.classList.add(`level-${fillEmptySquares ? Math.floor(Math.random() * 2) : 0}`); // Assign random level for spacing
                 contributionsGrid.appendChild(square); // Add square to the grid
                 if (letterCol >= letterTemplate[0].length + charGap - 1) {
                     letterCol = 0;
@@ -125,7 +125,7 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
                     // Check if the square is part of the letter in the map
                     square.classList.add(`level-${3 + Math.floor(Math.random() * 2)}`); // Assign higher level for letter squares
                 } else {                    
-                    square.classList.add(`level-${isLowActivityFilled ? Math.floor(Math.random() * 2) : 0}`); // Assign random level for non-letter squares                    
+                    square.classList.add(`level-${fillEmptySquares ? Math.floor(Math.random() * 2) : 0}`); // Assign random level for non-letter squares                    
                 }
                 contributionsGrid.appendChild(square); // Add square to the grid
                 letterCol++;

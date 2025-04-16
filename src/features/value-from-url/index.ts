@@ -1,10 +1,14 @@
-export const getValueFromURL = (): string => {
+export const getValueFromURL = (key: string): string => {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('value') || '';
+    return urlParams.get(key) || '';
 };
 
-export const setValueInURL = (value: string): void => {
+export const setValueInURL = (key: string, value: string | null): void => {
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('value', value);
+    if (value === null) {
+        urlParams.delete(key);
+    } else {
+        urlParams.set(key, value);
+    }    
     window.history.replaceState(null, '', `?${urlParams.toString()}`);
 };
