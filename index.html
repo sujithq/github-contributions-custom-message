@@ -41,7 +41,7 @@
             aria-required="true">
         </div>        
         <div class="input-group-item">
-          <label for="padding-x-input">Padding (X and Y):</label>
+          <label for="padding-x-input">Padding in px (horizontal and vertical):</label>
           <div class="inputs-container">
             <input type="number" id="padding-x-input" value="20" min="0" max="100">
             <input type="number" id="padding-y-input" value="50" min="0" max="100">
@@ -57,8 +57,12 @@
             aria-valuenow="3">
         </div>
         <div class="input-group-item">
-          <label for="draw-mode-input">Draw mode:</label>
-          <input type="checkbox" id="draw-mode-input" value="off" aria-checked="false">
+          <label for="no-low-activity-input">Do not fill low activity squares:</label>
+          <input type="checkbox" id="no-low-activity-input" aria-checked="false">
+        </div>
+        <div class="input-group-item">
+          <label for="draw-mode-input">Draw mode (draw with your mouse/finger):</label>
+          <input type="checkbox" id="draw-mode-input" aria-checked="false">
         </div>
         <input type="submit" id="generate-button" value="Generate" />
         <button id="clear-button" type="button">Clear</button>
@@ -76,26 +80,26 @@
         <button id="share-image-button" type="button">Share the image</button>
         <button id="share-link-button" type="button">Share the link</button>
       </div>
-      <div class="contribution-description">
-        <h3>What is GitHub contributions grid?</h3>
-        <p>The contributions grid is a visual representation of user activity (code commits) on GitHub.</p>
-        <p>Each square represents a day, and the color intensity indicates the number of contributions made on that day.
-        </p>
-        <h3>And what is this generator then?</h3>
-        <p>This generator allows you to create a custom contributions grid with a personalized message.</p>
-        <p>It can be used for fun, as a gift, or just to show off your creativity!</p>
-      </div>
-      <footer>
-        <span>Made with ❤️ by Artem Kudryavtsev</span>
-        <span>|</span>
-        <a href="https://github.com/artemkdr" target="_blank">github.com/artemkdr</a>
-        <span>|</span>
-        <a href="https://photo.artem.work" target="_blank">photo.artem.work</a>
-        <span>|</span>
-        <a href="mailto:artem.kdr@gmail.com" target="_blank">Contact me</a>
-      </footer>
-  </div>
-  </form>
+    </form>
+    <div class="contribution-description">
+      <h3>What is GitHub contributions grid?</h3>
+      <p>The contributions grid is a visual representation of user activity (code commits) on GitHub.</p>
+      <p>Each square represents a day, and the color intensity indicates the number of contributions made on that day.
+      </p>
+      <h3>And what is this generator then?</h3>
+      <p>This generator allows you to create a custom contributions grid with a personalized message.</p>
+      <p>It can be used for fun, as a gift, or just to show off your creativity!</p>
+    </div>
+    <footer>
+      <span>Made with ❤️ by Artem Kudryavtsev</span>
+      <span>|</span>
+      <a href="https://github.com/artemkdr" target="_blank">github.com/artemkdr</a>
+      <span>|</span>
+      <a href="https://photo.artem.work" target="_blank">photo.artem.work</a>
+      <span>|</span>
+      <a href="mailto:artem.kdr@gmail.com" target="_blank">Contact me</a>
+    </footer>
+  </div>  
   <script type="module" src="./src/main.ts"></script>
 </body>
 

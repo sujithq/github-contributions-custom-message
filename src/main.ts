@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     generateContributionGrid(getGeneratorOptions());
 });
 
-const getGeneratorOptions = () => {
+const getGeneratorOptions = () => {    
     return {
         letters: charMatrixMap,
         gridContainer: document.getElementById('grid-container') as HTMLElement,
@@ -102,6 +102,7 @@ const getGeneratorOptions = () => {
         speed: parseInt((document.getElementById('speed-input') as HTMLInputElement)?.value),
         paddingX: parseInt((document.getElementById('padding-x-input') as HTMLInputElement)?.value),
         paddingY: parseInt((document.getElementById('padding-y-input') as HTMLInputElement)?.value),
+        isLowActivityFilled: !(document.getElementById('no-low-activity-input') as HTMLInputElement)?.checked,
         creditsValue: (document.getElementById('credits-input') as HTMLInputElement).value,
         creditsContainer: document.getElementById('credits') as HTMLElement,
     };

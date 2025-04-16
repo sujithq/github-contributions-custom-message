@@ -26,12 +26,7 @@ textarea {
 }
 
 /* Theme variables */
-:root {
-    --bgColor-dark: #0d1117;
-    --color-dark: #c9d1d9;
-    --bgColor-light: #ffffff;
-    --color-light: #1f2328;
-
+:root {    
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -40,8 +35,9 @@ textarea {
 
 /* Dark theme styles */
 [theme='dark'] {
-    --bgColor: var(--bgColor-dark);
-    --color: var(--color-dark);
+    --bgColor: #0d1117;
+    --color: #c9d1d9;
+    --borderColor: #ffffff2d;
     --contribution-default-bgColor-0: #151b23;
     --contribution-default-bgColor-1: #033a16;
     --contribution-default-bgColor-2: #196c2e;
@@ -52,8 +48,9 @@ textarea {
 
 /* Light theme styles */
 [theme='light'] {
-    --bgColor: var(--bgColor-light);
-    --color: var(--color-light);
+    --bgColor: #ffffff;
+    --color: #1f2328;
+    --borderColor: #0000002d;
     --contribution-default-bgColor-0: #eff2f5;
     --contribution-default-bgColor-1: #aceebb;
     --contribution-default-bgColor-2: #4ac26b;
@@ -251,6 +248,13 @@ input[type='submit'] {
     font-size: 0.9rem;
     font-family: 'Roboto', Arial, Helvetica, sans-serif;
     font-weight: normal;
+    border: 0.1rem dotted var(--borderColor);
+}
+
+form {
+    display: flex;
+    gap: 1rem;        
+    flex-direction: column;
 }
 
 .grid-container-inner {
