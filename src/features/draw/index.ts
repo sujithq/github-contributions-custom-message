@@ -45,7 +45,7 @@ export const activateDrawMode = (grid: HTMLElement) => {
     grid.addEventListener('touchmove', handleTouchMove);
 };
 
-export const deactiveDrawMode = (grid: HTMLElement) => {
+export const deactivateDrawMode = (grid: HTMLElement) => {
     grid.style.touchAction = 'auto'; // Re-enable default touch actions
     document.removeEventListener('mousedown', startDrawing);
     document.removeEventListener('mouseup', stopDrawing);

@@ -1,4 +1,4 @@
-import { activateDrawMode, deactiveDrawMode } from '@/features/draw/index';
+import { activateDrawMode, deactivateDrawMode } from '@/features/draw/index';
 import { saveContributionGridAsImage } from '@/features/export/to-image';
 import { charMatrixMap } from '@/features/generate/char-matrix-map';
 import { generateContributionGrid } from '@/features/generate/index';
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((event.target as HTMLInputElement).checked) {
             activateDrawMode(constributionGrid);
         } else {
-            deactiveDrawMode(constributionGrid);
+            deactivateDrawMode(constributionGrid);
         }
     });
 

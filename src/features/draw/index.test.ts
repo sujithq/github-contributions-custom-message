@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { activateDrawMode, deactiveDrawMode } from './index';
+import { activateDrawMode, deactivateDrawMode } from './index';
 
 describe('activateDrawMode', () => {
     it('should add event listeners to the grid', () => {
@@ -31,7 +31,7 @@ describe('deactiveDrawMode', () => {
         const gridRemoveEventListenerSpy = vi.spyOn(grid, 'removeEventListener');
         const documentRemoveEventListenerSpy = vi.spyOn(document, 'removeEventListener');
 
-        deactiveDrawMode(grid);
+        deactivateDrawMode(grid);
 
         expect(grid.style.touchAction).toBe('auto');
         expect(gridRemoveEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function));
