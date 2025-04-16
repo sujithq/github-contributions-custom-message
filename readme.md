@@ -1,4 +1,4 @@
-# Create youe custom message in GitHub contributions style
+# Create your custom message in GitHub contributions style
 
 This is a simple html page that generates a message in a style of GitHub contributions grid.
 You can use it to create an image for your social profiles or your CV, etc.
