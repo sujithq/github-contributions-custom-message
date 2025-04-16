@@ -6,6 +6,13 @@ import { shareContributionGrid } from '@/features/share';
 import { getValueFromURL, setValueInURL } from '@/features/value-from-url';
 import { sanitizeInput } from '@/utils/sanitizer';
 
+if (import.meta.env.VITE_IS_VERCEL === 'true') {
+    const script = document.createElement('script');
+    script.defer = true;
+    script.src = '/_vercel/insights/script.js';
+    document.head.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     checkRequiredElements();
 
