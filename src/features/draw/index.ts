@@ -5,33 +5,34 @@ const startDrawing = () => {
 };
 
 const stopDrawing = () => {
-    isDrawing = false;        
+    isDrawing = false;
 };
 
-const paintSquare = (event) => {    
+type PaintSquareEvent = MouseEvent | TouchEvent | { target: EventTarget | null; type: string };
+
+const paintSquare = (event: PaintSquareEvent) => {
     if (!isDrawing && event.type != 'click') return;
-    const square = event.target;
-    if (square.classList.contains('square')) {        
+    const square = event.target as HTMLElement;
+    if (square?.classList.contains('square')) {
         square.className = `square ${Math.random() > 0.5 ? 'level-3' : 'level-4'}`;
     }
 };
 
 // Define reusable event handlers for touch events
-const handleTouchStart = (event) => {        
-    startDrawing();    
-    paintSquare(event.touches[0]);
+const handleTouchStart = (event: TouchEvent) => {
+    startDrawing();
+    paintSquare(event);
 };
 
-const handleTouchMove = (event) => {    
+const handleTouchMove = (event: TouchEvent) => {
     const touch = event.touches[0];
-    const element = document.elementFromPoint(touch.clientX, touch.clientY);        
+    const element = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement;
     if (element) {
-        paintSquare({ target: element });
+        paintSquare({ target: element, type: 'touchmove' });
     }
-        
 };
 
-export const activateDrawMode = (grid) => {
+export const activateDrawMode = (grid: HTMLElement) => {
     grid.style.touchAction = 'none'; // Disable default touch actions to prevent scrolling
     document.addEventListener('mousedown', startDrawing);
     document.addEventListener('mouseup', stopDrawing);
@@ -44,7 +45,7 @@ export const activateDrawMode = (grid) => {
     grid.addEventListener('touchmove', handleTouchMove);
 };
 
-export const deactiveDrawMode = (grid) => {
+export const deactivateDrawMode = (grid: HTMLElement) => {
     grid.style.touchAction = 'auto'; // Re-enable default touch actions
     document.removeEventListener('mousedown', startDrawing);
     document.removeEventListener('mouseup', stopDrawing);
