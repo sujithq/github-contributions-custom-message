@@ -239,16 +239,21 @@ input[type='submit'] {
 /* Grid container styles */
 .grid-container {
     display: flex;
-    flex-direction: row;
-    max-width: 100%;
-    overflow: auto;
+    flex-direction: row;    
     background-color: var(--bgColor);
     width: fit-content;
     height: fit-content;
     font-size: 0.9rem;
     font-family: 'Roboto', Arial, Helvetica, sans-serif;
-    font-weight: normal;
+    font-weight: normal;    
+}
+
+.grid-wrapper {
+    width: fit-content;
+    height: fit-content;
     border: 0.1rem dotted var(--borderColor);
+    overflow: auto;
+    max-width: 100%;
 }
 
 form {
