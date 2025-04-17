@@ -1,34 +1,21 @@
-import { charMatrixMap } from '@/features/generate/char-matrix-map';
-
 // Extracted helper function for speed normalization
 const normalizeSpeed = (speed: number) => Math.max(0, Math.min(10, speed)) / 1000;
 
-const whitespace = ' ';
-
-// Extracted helper function for padding a phrase
-const padPhrase = (phrase: string, minInputLength: number) => {
-    const spacesToAdd = Math.max(0, minInputLength - phrase.length);
-    const padding = whitespace.repeat(Math.ceil(spacesToAdd / 2));
-    return padding + phrase + padding;
-};
-
 interface GenerateContributionGridOptions {
+    input: number[][]; // Input matrix of 0s and 1s
     gridContainer: HTMLElement; // Main container for the grid
     contributionsGrid: HTMLElement; // Grid element where contributions are displayed
-    creditsContainer: HTMLElement; // Container for displaying credits
-    message: string; // User input message
-    letters: Record<string, number[][]>; // Map of characters to their grid representations
+    creditsContainer: HTMLElement; // Container for displaying credits    
     speed?: number; // Animation speed
     paddingX?: number; // Horizontal padding for the grid
     paddingY?: number; // Vertical padding for the grid
     creditsValue?: string; // Credits text input
     numRows?: number; // Number of rows in the grid
-    charGap?: number; // Gap in squares between chars in the grid
     gridGap?: string; // Gap between squares in the grid
     fillEmptySquares?: boolean; // Flag to fill empty squares with random low contrast color
     animationDuration?: number; // Duration of the animation for each square in seconds
-    maxInputLength?: number; // Maximum length of the input message
-    minInputLength?: number; // Minimum length of the input message
+    maxInputLength?: number; // Maximum length of the input message (in columns)
+    minInputLength?: number; // Minimum length of the input message (in columns)
 }
 
 export const generateContributionGrid = (options: GenerateContributionGridOptions) => {
@@ -36,19 +23,17 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
         gridContainer,
         contributionsGrid,
         creditsContainer,
-        letters = charMatrixMap,
-        message = 'HI THERE',
+        input,
         creditsValue = 'github.artem.work',
         speed = 3,
         paddingX = 20,
         paddingY = 20,
         numRows = 7,
-        charGap = 2,
         gridGap = '0.625rem',
         fillEmptySquares = true,
         animationDuration = 0.5,
-        maxInputLength = 15,
-        minInputLength = 10,
+        maxInputLength = 100,
+        minInputLength = 53,
     } = options;
 
     const speedFactor = normalizeSpeed(speed); // Normalize speed using helper function
@@ -64,76 +49,55 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
         paddingBottom: `${paddingY}px`,
     });
 
-    let phrase = '';
-    for (const char of message.toUpperCase()) {
-        // Convert message to uppercase and iterate through each character
-        if (letters[char] && letters[char].length > 0) {
-            // Only include characters that exist in the character map
-            phrase += char;
-        }
-        if (phrase.length >= maxInputLength) {
-            break; // Limit to max input length
-        }
+    // Ensure the matrix meets the required column length
+    const matrixWidth = input[0]?.length || 0;
+    let adjustedMatrix = input;
+    if (adjustedMatrix.length == 0) {
+        adjustedMatrix = Array.from({ length: numRows }, () => Array(1).fill(0)); // Default to a single column if input is empty
     }
 
-    // Pad the phrase to meet minimum length using helper function
-    if (phrase.length < minInputLength && letters[whitespace]) {
-        phrase = padPhrase(phrase, minInputLength);
+    if (matrixWidth < minInputLength) {
+        // Pad the matrix with empty columns (0)
+        const padding = Array.from({ length: Math.floor(0.5 * (minInputLength - matrixWidth)) }, () => 0);
+        adjustedMatrix = adjustedMatrix.map(row => [...padding, ...row, ...padding]);
+    } else if (matrixWidth > maxInputLength) {
+        // Trim the matrix to the maximum allowed columns
+        adjustedMatrix = adjustedMatrix.map(row => row.slice(0, maxInputLength));
+    }
+
+    // check if the number of rows is less than numRows and pad with empty rows (0)
+    if (adjustedMatrix.length < numRows) {
+        const padding = Array.from({ length: numRows - adjustedMatrix.length }, () => Array(adjustedMatrix[0].length).fill(0));
+        adjustedMatrix = [...adjustedMatrix, ...padding];
     }
 
     contributionsGrid.innerHTML = ''; // Clear previous grid
-    let totalColumns = 0;
-    // calculate the total number of columns needed for the grid
-    for (const char of phrase) {
-        totalColumns += letters[char][0].length + charGap; // Add character width and spacing
-    }
-    totalColumns = Math.max(0, totalColumns - charGap); // Remove trailing space
 
     // Set grid styles based on calculated values
     Object.assign(contributionsGrid.style, {
         gridTemplateRows: `repeat(${numRows}, ${gridGap})`, // Set grid row template
-        gridTemplateColumns: `repeat(${totalColumns}, ${gridGap})`, // Set grid column template
+        gridTemplateColumns: `repeat(${adjustedMatrix[0].length}, ${gridGap})`, // Set grid column template
     });
 
     let animationDelay = 0;
-    // draw the chars line by line
+    // Draw the matrix
     for (let row = 0; row < numRows; row++) {
-        let letterCol = 0;
-        let currentLetter = 0;
-        for (let col = 0; col < totalColumns; col++) {
-            const letterTemplate = letters[phrase[currentLetter]]; // Get the grid representation of the current letter
-
+        for (let col = 0; col < adjustedMatrix[0].length; col++) {
             const square = document.createElement('div'); // Create a square element
             square.classList.add('square');
             square.style.animationDuration = `${speedFactor == 0 ? 0 : animationDuration}s`; // Set animation duration
             square.style.animationDelay = `${animationDelay}s`; // Set animation delay
             animationDelay += speedFactor; // Increment delay for staggered effect
 
-            // when the letter line is done,
-            // add spacing and move to the next letter
-            if (letterCol >= letterTemplate[0].length) {
-                square.classList.add(`level-${fillEmptySquares ? Math.floor(Math.random() * 2) : 0}`); // Assign random level for spacing
-                contributionsGrid.appendChild(square); // Add square to the grid
-                if (letterCol >= letterTemplate[0].length + charGap - 1) {
-                    letterCol = 0;
-                    currentLetter++;
-                } else {
-                    letterCol++;
-                }
+            // Assign level based on matrix value
+            if (adjustedMatrix[row][col] === 1) {
+                square.classList.add(`level-${3 + Math.floor(Math.random() * 2)}`); // Higher level for 1
             } else {
-                if (letterTemplate[row][letterCol] === 1) {
-                    // Check if the square is part of the letter in the map
-                    square.classList.add(`level-${3 + Math.floor(Math.random() * 2)}`); // Assign higher level for letter squares
-                } else {                    
-                    square.classList.add(`level-${fillEmptySquares ? Math.floor(Math.random() * 2) : 0}`); // Assign random level for non-letter squares                    
-                }
-                contributionsGrid.appendChild(square); // Add square to the grid
-                letterCol++;
+                square.classList.add(`level-${fillEmptySquares ? Math.floor(Math.random() * 2) : 0}`); // Lower level for 0
             }
-        }
 
-        currentLetter = 0; // Reset current letter index for the next row
-        letterCol = 0; // Reset column index for the next row
+            contributionsGrid.appendChild(square); // Add square to the grid
+        }
     }
 
     generateLabels({

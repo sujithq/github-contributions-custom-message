@@ -1,7 +1,9 @@
 import { activateDrawMode, deactivateDrawMode } from '@/features/draw/index';
 import { saveContributionGridAsImage } from '@/features/export/to-image';
+import { buildMatrixFromPhrase } from '@/features/generate/build-matrix-from-phrase';
 import { charMatrixMap } from '@/features/generate/char-matrix-map';
 import { generateContributionGrid } from '@/features/generate/index';
+import { matrixMap } from '@/features/generate/matrices-collection';
 import { shareContributionGrid } from '@/features/share';
 import { getValueFromURL, setValueInURL } from '@/features/value-from-url';
 import { sanitizeInput } from '@/utils/sanitizer';
@@ -136,16 +138,30 @@ document.addEventListener('DOMContentLoaded', () => {
         input?.addEventListener('input', inputChangeHandler);
     });
 
+    // matrices buttons click handlers
+    const matricesButtons = document.querySelectorAll('button[data-matrix]');
+    matricesButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const matrixName = (button as HTMLButtonElement).getAttribute('data-matrix') as string;
+            if (matrixName && matrixMap[matrixName]) {                
+                generateContributionGrid({
+                    ...getGeneratorOptions(),
+                    input: matrixMap[matrixName],
+                });
+            }
+        });
+    });
+
     // generate contribution grid on page load
     generateContributionGrid(getGeneratorOptions());
 });
 
 const getGeneratorOptions = () => {    
     return {
+        input: buildMatrixFromPhrase((document.getElementById('message-input') as HTMLInputElement).value.toUpperCase()),
         letters: charMatrixMap,
         gridContainer: document.getElementById('grid-container') as HTMLElement,
-        contributionsGrid: document.getElementById('contribution-grid') as HTMLElement,
-        message: (document.getElementById('message-input') as HTMLInputElement).value.toUpperCase(),
+        contributionsGrid: document.getElementById('contribution-grid') as HTMLElement,        
         speed: parseInt((document.getElementById('speed-input') as HTMLInputElement)?.value),
         paddingX: parseInt((document.getElementById('padding-x-input') as HTMLInputElement)?.value),
         paddingY: parseInt((document.getElementById('padding-y-input') as HTMLInputElement)?.value),

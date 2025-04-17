@@ -153,12 +153,13 @@ input[type='submit'] {
     text-align: right;
 }
 
-.input-group .input-group-item input {
-    width: 50%;
+.input-group .input-group-item input {    
+    flex: 1;
 }
 
 .input-group .input-group-item input[type='checkbox'] {
     width: auto;
+    flex: none;
 }
 
 .input-group .input-group-item .inputs-container {
@@ -171,6 +172,16 @@ input[type='submit'] {
 .input-group input[type='submit'] {
     align-self: end;
     width: 50%;
+}
+
+.input-group button.inline-button {
+    width: auto;
+    padding: 0.5rem 0.2rem;    
+    border: none;
+    background: none;
+    color: var(--bgColor);
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* Container styles */

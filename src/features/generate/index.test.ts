@@ -1,4 +1,3 @@
-import { charMatrixMap } from '@/features/generate/char-matrix-map';
 import { describe, expect, it } from 'vitest';
 import { generateContributionGrid } from './index';
 
@@ -12,59 +11,25 @@ describe('generateContributionGrid', () => {
             gridContainer,
             contributionsGrid,
             creditsContainer,
-            message: 'T',
-            letters: {
-                T: [
-                    [1, 1, 1, 1, 1],
-                    [0, 0, 1, 0, 0],
-                    [0, 0, 1, 0, 0],
-                    [0, 0, 1, 0, 0],
-                    [0, 0, 1, 0, 0],
-                    [0, 0, 1, 0, 0],
-                    [0, 0, 1, 0, 0],
-                ],
-                ' ': [
-                    [0, 0],
-                    [0, 0],
-                    [0, 0],
-                    [0, 0],
-                    [0, 0],
-                    [0, 0],
-                    [0, 0],
-                ],
-            },
+            input: [
+                [1, 1, 1, 1, 1],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+            ],
             gridGap: '10px',
-            minInputLength: 10,
-            numRows: 7,
-            charGap: 2,
+            minInputLength: 45,
+            numRows: 7            
         });
 
         expect(contributionsGrid.style.gridTemplateRows).toBe('repeat(7, 10px)'); // 7 rows of 10px each
-        expect(contributionsGrid.style.gridTemplateColumns).toBe('repeat(45, 10px)'); // 5 (1 letter) + 20 (10 spaces by 2 columns) + 20 (10 gaps by 2)  = 45 columns of 10px each
+        expect(contributionsGrid.style.gridTemplateColumns).toBe('repeat(45, 10px)');
         expect(contributionsGrid.children.length).toBe(315); // 7 rows * 45 columns = 315 squares
     });
-
-    it('should generate the correct grid structure without letters map', () => {
-        const gridContainer = document.createElement('div');
-        const contributionsGrid = document.createElement('div');
-        const creditsContainer = document.createElement('div');
-
-        generateContributionGrid({
-            gridContainer,
-            contributionsGrid,
-            creditsContainer,
-            message: '**TEST**',
-            letters: {},
-            gridGap: '10px',
-            minInputLength: 10,
-            numRows: 7,
-            charGap: 2,
-        });
-
-        expect(contributionsGrid.style.gridTemplateRows).toBe('repeat(7, 10px)'); // 7 rows of 10px each
-        expect(contributionsGrid.style.gridTemplateColumns).toBe('repeat(0, 10px)'); //
-        expect(contributionsGrid.children.length).toBe(0); //
-    });
+    
 
     it('should fill the grid with squares with correct classes', () => {
         const gridContainer = document.createElement('div');
@@ -75,22 +40,17 @@ describe('generateContributionGrid', () => {
             gridContainer,
             contributionsGrid,
             creditsContainer,
-            message: 'L',
-            letters: {
-                L: [
-                    // it's not a correct L, but for the tests it doesn't matter
-                    [1, 0, 1, 0, 1],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                ],
-            },
-            minInputLength: 1,
-            numRows: 7,
-            charGap: 2,
+            input: [                   
+                [1, 0, 1, 0, 1],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+            ],
+            minInputLength: 5,
+            numRows: 7            
         });
 
         const squares = contributionsGrid.querySelectorAll('.square');
@@ -116,8 +76,15 @@ describe('generateContributionGrid', () => {
             gridContainer,
             contributionsGrid,
             creditsContainer,
-            message: 'TEST',
-            letters: charMatrixMap,
+            input: [
+                [1, 0, 1, 0, 1],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
+            ],            
             paddingX: 10,
             paddingY: 15,
         });
@@ -137,8 +104,15 @@ describe('generateContributionGrid', () => {
             gridContainer,
             contributionsGrid,
             creditsContainer,
-            message: 'TEST',
-            letters: charMatrixMap,
+            input: [
+                [1, 0, 1, 0, 1],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
+            ],  
             creditsValue: 'Test Credits',
         });
 
