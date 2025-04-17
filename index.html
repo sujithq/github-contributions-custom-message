@@ -33,68 +33,68 @@
     </svg>
   </button>
   <div class="container">
-    <form id="form" action="">
-      <div class="input-group">
-        <div class="input-group-item">
-          <label for="message-input">Enter a phrase (15 chars max):</label>
-          <div class="inputs-container">
-            <input type="text" id="message-input" value="Hi there" placeholder="Type a phrase" maxlength="15"
-              aria-required="true">
-            <button class="inline-button" type="button" data-matrix="heart">❤️</button>
-            <button class="inline-button" type="button" data-matrix="smiley">😐</button>
-          </div>
-        </div>        
-        <div class="input-group-item">
-          <label for="padding-x-input">Padding in px (horizontal and vertical):</label>
-          <div class="inputs-container">
-            <input type="number" id="padding-x-input" value="20" min="0" max="100">
-            <input type="number" id="padding-y-input" value="50" min="0" max="100">
-          </div>
+    <form id="form" action="">      
+      <div class="input-group-item">
+        <label for="message-input">Enter a phrase (15 chars max):</label>
+        <div class="inputs-container">
+          <input type="text" id="message-input" value="Hi there" placeholder="Type a phrase" maxlength="15"
+            aria-required="true">
+          <button class="inline-button" type="button" data-matrix="heart">❤️</button>
+          <button class="inline-button" type="button" data-matrix="smiley">😐</button>
         </div>
-        <div class="input-group-item">
-          <label for="credits-input">Credits:</label>
-          <div class="inputs-container">
-            <input type="text" id="credits-input" value="github.artem.work">
-          </div>
-        </div>        
-        <div class="input-group-item">
-          <label for="speed-input">Animation speed:</label>
-          <div class="inputs-container">
-            <input type="range" id="speed-input" value="3" min="0" max="10" step="1" aria-valuemin="0" aria-valuemax="10"
-              aria-valuenow="3">
-          </div>
+      </div>        
+      <div class="input-group-item">
+        <label for="padding-x-input">Padding in px (horizontal and vertical):</label>
+        <div class="inputs-container">
+          <input type="number" id="padding-x-input" value="20" min="0" max="100">
+          <input type="number" id="padding-y-input" value="50" min="0" max="100">
         </div>
-        <div class="input-group-item">
-          <label for="fill-empty-squares-input">Do not fill low activity squares:</label>
-          <div class="inputs-container">
-            <input type="checkbox" id="fill-empty-squares-input" checked>
-          </div>
+      </div>
+      <div class="input-group-item">
+        <label for="credits-input">Credits:</label>
+        <div class="inputs-container">
+          <input type="text" id="credits-input" value="github.artem.work">
         </div>
-        <div class="input-group-item">
-          <label for="draw-mode-input">Draw mode (draw with your mouse/finger):</label>
-          <div class="inputs-container">
-            <input type="checkbox" id="draw-mode-input" aria-checked="false">
-          </div>
+      </div>        
+      <div class="input-group-item">
+        <label for="speed-input">Animation speed:</label>
+        <div class="inputs-container">
+          <input type="range" id="speed-input" value="3" min="0" max="10" step="1" aria-valuemin="0" aria-valuemax="10"
+            aria-valuenow="3">
         </div>
+      </div>
+      <div class="input-group-item">
+        <label for="fill-empty-squares-input">Do not fill low activity squares:</label>
+        <div class="inputs-container">
+          <input type="checkbox" id="fill-empty-squares-input" checked>
+        </div>
+      </div>
+      <div class="input-group-item">
+        <label for="draw-mode-input">Draw mode (draw with your mouse/finger):</label>
+        <div class="inputs-container">
+          <input type="checkbox" id="draw-mode-input" aria-checked="false">
+        </div>
+      </div>
+      <div class="buttons-container">
         <input type="submit" id="generate-button" value="Generate" />
         <button id="clear-button" type="button">Clear</button>        
       </div>
-      <div class="grid-wrapper">
-        <div id="grid-container" class="grid-container">
-          <div id="day-labels" class="day-labels"></div>
-          <div class="grid-container-inner">
-            <div id="month-labels" class="month-labels"></div>
-            <div id="contribution-grid" class="grid"></div>
-            <div id="credits" class="credits"></div>
-          </div>
+    </form>
+    <div id="grid-wrapper" class="grid-wrapper">
+      <div id="grid-container" class="grid-container">
+        <div id="day-labels" class="day-labels"></div>
+        <div class="grid-container-inner">
+          <div id="month-labels" class="month-labels"></div>
+          <div id="contribution-grid" class="grid"></div>
+          <div id="credits" class="credits"></div>
         </div>
       </div>
-      <div class="grid-toolbar">
-        <button id="save-button" type="button">Export as image</button>
-        <button id="share-image-button" type="button">Share the image</button>
-        <button id="share-link-button" type="button">Share the link</button>
-      </div>
-    </form>
+    </div>
+    <div class="grid-toolbar">
+      <button id="save-button" type="button">Export as image</button>
+      <button id="share-image-button" type="button">Share the image</button>
+      <button id="share-link-button" type="button">Share the link</button>
+    </div>    
     <div class="contribution-description">
       <h3>What is GitHub contributions grid?</h3>
       <p>The contributions grid is a visual representation of user activity (code commits) on GitHub.</p>

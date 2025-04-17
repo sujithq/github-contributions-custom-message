@@ -92,7 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form');
     form?.addEventListener('submit', (event) => {
         event.preventDefault();
-        generateContributionGrid(getGeneratorOptions());
+        generateContributionGrid(getGeneratorOptions());        
+        centerGridWrapper();
     });
 
     // setup share button handlers
@@ -132,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const inputChangeHandler = debounce(() => {
         generateContributionGrid(getGeneratorOptions());
+        centerGridWrapper();
     }, 500);
     inputs.forEach((inputId) => {
         const input = document.getElementById(inputId) as HTMLInputElement;
@@ -148,13 +150,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     ...getGeneratorOptions(),
                     input: matrixMap[matrixName],
                 });
+                centerGridWrapper();
             }
         });
     });
 
     // generate contribution grid on page load
     generateContributionGrid(getGeneratorOptions());
+    centerGridWrapper();
 });
+
+const centerGridWrapper = () => {    
+    const gridWrapper = document.getElementById('grid-wrapper');
+    if (gridWrapper) {
+        gridWrapper.scrollTo({            
+            left: (gridWrapper.scrollWidth - gridWrapper.clientWidth) / 2,
+            behavior: 'smooth',
+        });
+    }
+}
 
 const getGeneratorOptions = () => {    
     return {

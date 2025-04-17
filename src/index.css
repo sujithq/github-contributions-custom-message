@@ -1,5 +1,6 @@
 html {
     font-size: 16px;
+    scroll-behavior: smooth;
 }
 
 input,
@@ -72,13 +73,17 @@ body {
     overflow: auto;
     margin: 0 auto;
     min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* Heading styles */
 h1 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    max-width: calc(100% - 5rem);
+    max-width: calc(100% - 5rem);    
+    align-self: center;
 }
 
 /* Link styles */
@@ -103,10 +108,20 @@ footer {
     line-height: 1.4rem;
 }
 
+form {
+    display: flex;
+    gap: 1rem;        
+    flex-direction: column;
+    align-self: center;
+    width: 100%;
+    max-width: 40rem;
+    overflow: auto;
+}
+
 /* Label styles */
 label {
     font-size: 1rem;
-    padding: 0.5rem;
+    padding: 0rem 0.5rem;
     color: var(--color);
 }
 
@@ -135,46 +150,44 @@ input[type='submit'] {
 }
 
 /* Input group styles */
-.input-group {
-    display: flex;
-    gap: 0.5rem;
-    flex-direction: column;
-    max-width: 40rem;
-}
-
-.input-group .input-group-item {
+.input-group-item {
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: start;
+    width: 100%;
 }
 
-.input-group .input-group-item label {
-    width: 50%;
+.input-group-item label {    
     text-align: right;
+    width: 40%;
+    min-width: 40%;
 }
 
-.input-group .input-group-item input {    
-    flex: 1;
-}
-
-.input-group .input-group-item input[type='checkbox'] {
+.input-group-item input[type='checkbox'] {
     width: auto;
     flex: none;
 }
 
-.input-group .input-group-item .inputs-container {
+.inputs-container {
     display: flex;
-    gap: 0.5rem;
-    width: 50%;
+    gap: 0.5rem;  
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: start;
+    align-items: center;  
+    width: 60%;
+    min-width: 0;
 }
 
-.input-group button,
-.input-group input[type='submit'] {
-    align-self: end;
-    width: 50%;
+.inputs-container input {
+    flex: 1;
+    min-width: 0;
 }
 
-.input-group button.inline-button {
+button.inline-button {
     width: auto;
     padding: 0.5rem 0.2rem;    
     border: none;
@@ -182,6 +195,14 @@ input[type='submit'] {
     color: var(--bgColor);
     font-weight: bold;
     cursor: pointer;
+}
+
+.buttons-container {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: row;
 }
 
 /* Container styles */
@@ -256,7 +277,7 @@ input[type='submit'] {
     height: fit-content;
     font-size: 0.9rem;
     font-family: 'Roboto', Arial, Helvetica, sans-serif;
-    font-weight: normal;    
+    font-weight: normal;       
 }
 
 .grid-wrapper {
@@ -265,12 +286,7 @@ input[type='submit'] {
     border: 0.1rem dotted var(--borderColor);
     overflow: auto;
     max-width: 100%;
-}
-
-form {
-    display: flex;
-    gap: 1rem;        
-    flex-direction: column;
+    align-self: center; 
 }
 
 .grid-container-inner {
@@ -354,7 +370,8 @@ form {
     font-size: 1rem;
     color: var(--color);
     padding: 2rem 0rem;
-    text-align: left;
+    text-align: center;
+    align-self: center;
 }
 
 .contribution-description h3 {
@@ -365,4 +382,31 @@ form {
 
 .contribution-description p {
     margin: 1rem 0rem;
+}
+
+
+@media (min-width: 500px) {    
+    .input-group-item label {
+        width: 50%;
+        min-width: 0;
+        text-align: right;
+    }
+
+    .input-group-item .inputs-container {
+        width: 50%;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 400px) {
+    h1 {
+        align-self: start;
+        max-width: calc(100% - 2rem);
+    }
+}
+
+@media (max-height: 700px) {
+    form {
+        gap: 0.5rem;
+    }
 }
