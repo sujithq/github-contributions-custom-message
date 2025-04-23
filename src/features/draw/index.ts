@@ -15,6 +15,14 @@ const paintSquare = (event: PaintSquareEvent) => {
     const square = event.target as HTMLElement;
     if (square?.classList.contains('square')) {
         square.className = `square ${Math.random() > 0.5 ? 'level-3' : 'level-4'}`;
+
+        // Dispatch a custom event with the square and event details
+        const customEvent = new CustomEvent('painted', {
+            detail: { square, originalEvent: event },
+            bubbles: true,
+            cancelable: true
+        });
+        square.dispatchEvent(customEvent);
     }
 };
 
@@ -32,7 +40,7 @@ const handleTouchMove = (event: TouchEvent) => {
     }
 };
 
-export const activateDrawMode = (grid: HTMLElement) => {
+export const activateDrawMode = (grid: HTMLElement) => {    
     grid.style.touchAction = 'none'; // Disable default touch actions to prevent scrolling
     document.addEventListener('mousedown', startDrawing);
     document.addEventListener('mouseup', stopDrawing);
@@ -45,7 +53,7 @@ export const activateDrawMode = (grid: HTMLElement) => {
     grid.addEventListener('touchmove', handleTouchMove);
 };
 
-export const deactivateDrawMode = (grid: HTMLElement) => {
+export const deactivateDrawMode = (grid: HTMLElement) => {    
     grid.style.touchAction = 'auto'; // Re-enable default touch actions
     document.removeEventListener('mousedown', startDrawing);
     document.removeEventListener('mouseup', stopDrawing);

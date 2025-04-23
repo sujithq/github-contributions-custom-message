@@ -88,6 +88,8 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
             square.style.animationDuration = `${speedFactor == 0 ? 0 : animationDuration}s`; // Set animation duration
             square.style.animationDelay = `${animationDelay}s`; // Set animation delay
             animationDelay += speedFactor; // Increment delay for staggered effect
+            square.setAttribute('data-row', row.toString()); // Set data attributes for row and column
+            square.setAttribute('data-col', col.toString()); // Set data attributes for row and column
 
             // Assign level based on matrix value
             if (adjustedMatrix[row][col] === 1) {
