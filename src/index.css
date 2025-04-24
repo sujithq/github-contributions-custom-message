@@ -256,7 +256,7 @@ button.inline-button {
     border-radius: 0.125rem;
     shape-rendering: geometricprecision;
     animation: fadeIn var(--animation-duration) ease-out;
-    animation-fill-mode: both;
+    animation-fill-mode: both;    
 }
 
 /* Grid toolbar styles */

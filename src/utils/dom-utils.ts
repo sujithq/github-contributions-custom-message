@@ -1,5 +1,4 @@
-import { buildMatrixFromPhrase } from "@/features/generate/build-matrix-from-phrase";
-import { charMatrixMap } from "@/features/generate/char-matrix-map";
+import { buildMatrixFromString } from "@/features/generate/build-matrix-from-string";
 
 export const debounce = (func: (event: Event) => void, delay: number) => {
     let timeoutId: number | undefined;
@@ -9,14 +8,20 @@ export const debounce = (func: (event: Event) => void, delay: number) => {
     };
 };
 
-export const captureGridToMatrix = () => {
-    const squares = document.querySelectorAll('#contribution-grid .square');
+export const captureGridToMatrix = (squaresSelector: string = '#contribution-grid .square') => {
+    const colAttrName = 'data-col';
+    const rowAttrName = 'data-row';
+    const valueAttrName = 'data-value';
+    const squares = document.querySelectorAll(squaresSelector);
     const array: number[][] = [];
     squares.forEach((square) => {
-        const rowIndex = parseInt(square.getAttribute('data-row') as string, 10);
-        const colIndex = parseInt(square.getAttribute('data-col') as string, 10);
-        const val = (square.className.indexOf('level-3') >= 0 || square.className.indexOf('level-4') >= 0) ? 1 : 0;
-        if (!array[rowIndex]) {
+        if (square.getAttribute(colAttrName) === null || square.getAttribute(rowAttrName) === null) {
+            return;
+        }
+        const rowIndex = parseInt(square.getAttribute(rowAttrName) as string, 10);
+        const colIndex = parseInt(square.getAttribute(colAttrName) as string, 10);
+        const val = parseInt(square.getAttribute(valueAttrName) as string, 10);
+        if (array[rowIndex] === undefined) {
             array[rowIndex] = [];
         }
         array[rowIndex][colIndex] = val;
@@ -36,8 +41,12 @@ export const centerGridWrapper = () => {
 
 export const getGeneratorOptions = () => {
     return {
-        input: buildMatrixFromPhrase((document.getElementById('message-input') as HTMLInputElement).value.toUpperCase()),
-        letters: charMatrixMap,
+        input: buildMatrixFromString((document.getElementById('message-input') as HTMLInputElement).value.toUpperCase()),        
+        squaresClassName: 'square',
+        squaresLevelClassName: 'level-{level}',
+        valueAttrName: 'data-value',
+        colAttrName: 'data-col',
+        rowAttrName: 'data-row',
         gridContainer: document.getElementById('grid-container') as HTMLElement,
         contributionsGrid: document.getElementById('contribution-grid') as HTMLElement,
         speed: parseInt((document.getElementById('speed-input') as HTMLInputElement)?.value),

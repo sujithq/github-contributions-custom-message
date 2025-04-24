@@ -1,3 +1,4 @@
+import { currentMatrixState } from '@/features/current-matrix-state';
 import { activateDrawMode, deactivateDrawMode } from '@/features/draw/index';
 import { saveContributionGridAsImage } from '@/features/export/to-image';
 import { generateContributionGrid } from '@/features/generate/index';
@@ -14,9 +15,6 @@ if (import.meta.env.VITE_IS_VERCEL === 'true') {
     document.head.appendChild(script);
 }
 
-let currentMatrix: number[][] | undefined | null;
-
-// Encapsulate event listeners into separate functions
 const setupThemeToggle = () => {
     const themeToggle = document.getElementById('theme-toggle');
     themeToggle?.addEventListener('click', () => {
@@ -38,7 +36,7 @@ const setupSaveButton = () => {
     );
 };
 
-const setupMessageInputHandler = () => {
+const setupMessageInput = () => {
     const messageInput = document.getElementById('message-input') as HTMLInputElement;
     const messageInputHandler = () => {
         const message = sanitizeInput(messageInput.value.toUpperCase());
@@ -54,7 +52,7 @@ const setupMessageInputHandler = () => {
     }
 };
 
-const setupFillEmptySquaresHandler = () => {
+const setupFillEmptySquaresInput = () => {
     const fillEmptySquaresInput = document.getElementById('fill-empty-squares-input') as HTMLInputElement;
     if (fillEmptySquaresInput) {
         fillEmptySquaresInput.addEventListener('change', () => {
@@ -69,11 +67,27 @@ const setupFillEmptySquaresHandler = () => {
     }
 };
 
-const setupDrawModeHandler = () => {
+const setupDrawModeInput = () => {
     const drawMode = document.getElementById('draw-mode-input') as HTMLInputElement;
     const contributionGrid = document.getElementById('contribution-grid') as HTMLElement;
-    const gridPaintedHandler = () => {
-        currentMatrix = captureGridToMatrix();
+    const gridPaintedHandler = (event: Event) => {                
+        const customEvent = event as CustomEvent;
+        if (customEvent && customEvent.type === 'painted' && customEvent.detail && customEvent.detail.square) {
+            const selector = '#contribution-grid .square';
+            const squares = document.querySelectorAll(selector);
+            // if currentMatrix has the same size as the grid, we can update only painted square
+            const currentMatrix = currentMatrixState.getMatrix();
+            if (currentMatrix && currentMatrix.length > 0 && squares.length === currentMatrix.length * currentMatrix[0].length) {
+                const square = customEvent.detail.square as HTMLElement;
+                if (!square) return;
+                const rowIndex = parseInt(square.getAttribute('data-row') as string, 10);
+                const colIndex = parseInt(square.getAttribute('data-col') as string, 10);
+                const value = parseInt(square.getAttribute('data-value') as string, 10);
+                currentMatrixState.updateMatrix(rowIndex, colIndex, value);
+            } else { // otherwise we need to update the whole grid            
+                currentMatrixState.setMatrix(captureGridToMatrix(selector));
+            }
+        }        
     };
 
     drawMode?.addEventListener('change', (event) => {
@@ -87,7 +101,7 @@ const setupDrawModeHandler = () => {
     });
 };
 
-const setupClearButtonHandler = () => {
+const setupClearButton = () => {
     const clearButton = document.getElementById('clear-button');
     clearButton?.addEventListener('click', () => {
         const squares = document.querySelectorAll('#contribution-grid .square');
@@ -95,20 +109,20 @@ const setupClearButtonHandler = () => {
         squares.forEach((square) => {
             square.className = `square level-${fillEmptySquares ? Math.floor(Math.random() * 2) : 0}`;
         });
-        currentMatrix = null;
+        currentMatrixState.resetMatrix();
     });
 };
 
-const setupFormSubmitHandler = () => {
+const setupForm = () => {
     const form = document.getElementById('form');
     form?.addEventListener('submit', (event) => {
         event.preventDefault();
-        generateImage();
+        updateGrid();
         centerGridWrapper();
     });
 };
 
-const setupShareButtonHandlers = () => {
+const setupShareButtons = () => {
     const gridContainer = document.getElementById('grid-container') as HTMLElement;
     const shareImageButton = document.getElementById('share-image-button');
     shareImageButton?.addEventListener('click', async () => {
@@ -139,9 +153,9 @@ const setupInputChangeHandlers = () => {
     ];
     const inputChangeHandler = debounce((event: Event) => {
         if ((event.target as HTMLInputElement)?.id === 'message-input') {
-            currentMatrix = null;
+            currentMatrixState.resetMatrix();
         }
-        generateImage();
+        updateGrid();
         centerGridWrapper();
     }, 500);
     inputs.forEach((inputId) => {
@@ -150,13 +164,13 @@ const setupInputChangeHandlers = () => {
     });
 };
 
-const setupMatricesButtonsHandlers = () => {
+const setupMatricesButtons = () => {
     const matricesButtons = document.querySelectorAll('button[data-matrix]');
     matricesButtons.forEach((button) => {
         button.addEventListener('click', () => {
             const matrixName = (button as HTMLButtonElement).getAttribute('data-matrix') as string;
             if (matrixName && matrixMap[matrixName]) {
-                generateImage({
+                updateGrid({
                     input: matrixMap[matrixName],
                 });
                 centerGridWrapper();
@@ -165,39 +179,43 @@ const setupMatricesButtonsHandlers = () => {
     });
 };
 
-// Initialize all event listeners
-const initializeEventListeners = () => {
+// Initialize the controls and event listeners
+const initialize = () => {
     setupThemeToggle();
     setupSaveButton();
-    setupMessageInputHandler();
-    setupFillEmptySquaresHandler();
-    setupDrawModeHandler();
-    setupClearButtonHandler();
-    setupFormSubmitHandler();
-    setupShareButtonHandlers();
+    setupMessageInput();
+    setupFillEmptySquaresInput();
+    setupDrawModeInput();
+    setupClearButton();
+    setupForm();
+    setupShareButtons();
     setupInputChangeHandlers();
-    setupMatricesButtonsHandlers();
+    setupMatricesButtons();
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // check that all required elements are present in the DOM
     checkRequiredElements();
-    initializeEventListeners();
-    generateImage();
+    // initialize the event listeners and controls
+    initialize();
+    // generate the initial grid
+    updateGrid();
     centerGridWrapper();
 });
 
-const generateImage = (props? : {
+const updateGrid = (props? : {
     input?: number[][];
 }) => {
     const options = {
         ...getGeneratorOptions(),
         ...props
     }
+    const currentMatrix = currentMatrixState.getMatrix();
     if (!props && currentMatrix) {
         options.input = currentMatrix;
     }
     generateContributionGrid(options);
-    currentMatrix = options.input;
+    currentMatrixState.setMatrix(options.input);
 }
 
 const checkRequiredElements = () => {

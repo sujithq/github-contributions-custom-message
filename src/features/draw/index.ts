@@ -15,6 +15,7 @@ const paintSquare = (event: PaintSquareEvent) => {
     const square = event.target as HTMLElement;
     if (square?.classList.contains('square')) {
         square.className = `square ${Math.random() > 0.5 ? 'level-3' : 'level-4'}`;
+        square.setAttribute('data-value', '1'); // Set the value attribute to 1
 
         // Dispatch a custom event with the square and event details
         const customEvent = new CustomEvent('painted', {

@@ -16,6 +16,11 @@ interface GenerateContributionGridOptions {
     animationDuration?: number; // Duration of the animation for each square in seconds
     maxInputLength?: number; // Maximum length of the input message (in columns)
     minInputLength?: number; // Minimum length of the input message (in columns)
+    squareClassName?: string; // Class name for each square
+    squareLevelClassName?: string; // Template of class name for the level of each square: level-{level}
+    valueAttrName?: string; // Attribute name for the value of each square
+    colAttrName?: string; // Attribute name for the column index of each square
+    rowAttrName?: string; // Attribute name for the row index of each square
 }
 
 export const generateContributionGrid = (options: GenerateContributionGridOptions) => {
@@ -34,6 +39,12 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
         animationDuration = 0.5,
         maxInputLength = 100,
         minInputLength = 53,
+        squareClassName = 'square',
+        squareLevelClassName = 'level-{level}',
+        valueAttrName = 'data-value',
+        colAttrName = 'data-col',
+        rowAttrName = 'data-row',
+
     } = options;
 
     const speedFactor = normalizeSpeed(speed); // Normalize speed using helper function
@@ -84,18 +95,19 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
     for (let row = 0; row < numRows; row++) {
         for (let col = 0; col < adjustedMatrix[0].length; col++) {
             const square = document.createElement('div'); // Create a square element
-            square.classList.add('square');
+            square.classList.add(squareClassName);
             square.style.animationDuration = `${speedFactor == 0 ? 0 : animationDuration}s`; // Set animation duration
             square.style.animationDelay = `${animationDelay}s`; // Set animation delay
             animationDelay += speedFactor; // Increment delay for staggered effect
-            square.setAttribute('data-row', row.toString()); // Set data attributes for row and column
-            square.setAttribute('data-col', col.toString()); // Set data attributes for row and column
+            square.setAttribute(rowAttrName, row.toString()); // Set data attributes for row and column
+            square.setAttribute(colAttrName, col.toString()); // Set data attributes for row and column
+            square.setAttribute(valueAttrName, adjustedMatrix[row][col].toString()); // Set data attribute for value
 
             // Assign level based on matrix value
-            if (adjustedMatrix[row][col] === 1) {
-                square.classList.add(`level-${3 + Math.floor(Math.random() * 2)}`); // Higher level for 1
+            if (adjustedMatrix[row][col] === 1) {                
+                square.classList.add(squareLevelClassName.replace('{level}', (3 + Math.floor(Math.random() * 2)).toString())); // Higher level for 1
             } else {
-                square.classList.add(`level-${fillEmptySquares ? Math.floor(Math.random() * 2) : 0}`); // Lower level for 0
+                square.classList.add(squareLevelClassName.replace('{level}', (fillEmptySquares ? Math.floor(Math.random() * 2) : 0).toString())); // Lower level for 0
             }
 
             contributionsGrid.appendChild(square); // Add square to the grid
