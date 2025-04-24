@@ -8,7 +8,7 @@ export const debounce = (func: (event: Event) => void, delay: number) => {
     };
 };
 
-export const captureGridToMatrix = (squaresSelector: string = '#contribution-grid .square') => {
+export const captureGridToMatrix = (squaresSelector = '#contribution-grid .square') => {
     const colAttrName = 'data-col';
     const rowAttrName = 'data-row';
     const valueAttrName = 'data-value';
