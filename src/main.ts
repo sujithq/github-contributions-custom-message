@@ -1,6 +1,7 @@
 import { currentMatrixState } from '@/features/current-matrix-state';
 import { activateDrawMode, deactivateDrawMode } from '@/features/draw/index';
 import { saveContributionGridAsImage } from '@/features/export/to-image';
+import { clearGrid } from '@/features/generate/clear-grid';
 import { generateContributionGrid } from '@/features/generate/index';
 import { matrixMap } from '@/features/generate/matrices-collection';
 import { shareContributionGrid } from '@/features/share';
@@ -76,7 +77,7 @@ const setupDrawModeInput = () => {
             const selector = '#contribution-grid .square';
             const squares = document.querySelectorAll(selector);
             // if currentMatrix has the same size as the grid, we can update only painted square
-            const currentMatrix = currentMatrixState.getMatrix();
+            const currentMatrix = currentMatrixState.getMatrix();            
             if (currentMatrix && currentMatrix.length > 0 && squares.length === currentMatrix.length * currentMatrix[0].length) {
                 const square = customEvent.detail.square as HTMLElement;
                 if (!square) return;
@@ -86,7 +87,7 @@ const setupDrawModeInput = () => {
                 currentMatrixState.updateMatrix(rowIndex, colIndex, value);
             } else { // otherwise we need to update the whole grid            
                 currentMatrixState.setMatrix(captureGridToMatrix(selector));
-            }
+            }            
         }        
     };
 
@@ -104,10 +105,12 @@ const setupDrawModeInput = () => {
 const setupClearButton = () => {
     const clearButton = document.getElementById('clear-button');
     clearButton?.addEventListener('click', () => {
-        const squares = document.querySelectorAll('#contribution-grid .square');
-        const fillEmptySquares = (document.getElementById('fill-empty-squares-input') as HTMLInputElement)?.checked;
-        squares.forEach((square) => {
-            square.className = `square level-${fillEmptySquares ? Math.floor(Math.random() * 2) : 0}`;
+        clearGrid({
+            contributionsGrid: document.getElementById('contribution-grid') as HTMLElement,
+            fillEmptySquares: (document.getElementById('fill-empty-squares-input') as HTMLInputElement)?.checked,
+            squareClassName: 'square',
+            squareLevelClassName: 'level-{level}',
+            valueAttrName: 'data-value'
         });
         currentMatrixState.resetMatrix();
     });
@@ -185,9 +188,9 @@ const initialize = () => {
     setupSaveButton();
     setupMessageInput();
     setupFillEmptySquaresInput();
-    setupDrawModeInput();
-    setupClearButton();
+    setupDrawModeInput();    
     setupForm();
+    setupClearButton();
     setupShareButtons();
     setupInputChangeHandlers();
     setupMatricesButtons();
@@ -214,7 +217,7 @@ const updateGrid = (props? : {
     if (!props && currentMatrix) {
         options.input = currentMatrix;
     }
-    generateContributionGrid(options);
+    generateContributionGrid(options);    
     currentMatrixState.setMatrix(options.input);
 }
 

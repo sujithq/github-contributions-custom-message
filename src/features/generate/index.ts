@@ -117,7 +117,7 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
     generateLabels({
         dayLabelsContainer: gridContainer.querySelector('#day-labels') as HTMLElement, // Get the day labels container
         monthLabelsContainer: gridContainer.querySelector('#month-labels') as HTMLElement, // Get the month labels container
-    });
+    });    
 };
 
 const generateLabels = ({
