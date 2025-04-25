@@ -39,7 +39,7 @@ export const centerGridWrapper = () => {
     }
 };
 
-export const getGeneratorOptions = () => {
+export const getGeneratorOptions = () => {    
     return {
         input: buildMatrixFromString((document.getElementById('message-input') as HTMLInputElement).value.toUpperCase()),        
         squaresClassName: 'square',

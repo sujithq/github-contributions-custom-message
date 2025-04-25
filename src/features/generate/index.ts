@@ -99,6 +99,7 @@ export const generateContributionGrid = (options: GenerateContributionGridOption
             square.style.animationDuration = `${speedFactor == 0 ? 0 : animationDuration}s`; // Set animation duration
             square.style.animationDelay = `${animationDelay}s`; // Set animation delay
             animationDelay += speedFactor; // Increment delay for staggered effect
+            square.setAttribute('draggable', 'false'); // Prevent dragging of squares
             square.setAttribute(rowAttrName, row.toString()); // Set data attributes for row and column
             square.setAttribute(colAttrName, col.toString()); // Set data attributes for row and column
             square.setAttribute(valueAttrName, adjustedMatrix[row][col].toString()); // Set data attribute for value

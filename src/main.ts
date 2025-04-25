@@ -7,8 +7,11 @@ import { matrixMap } from '@/features/generate/matrices-collection';
 import { shareContributionGrid } from '@/features/share';
 import { getValueFromURL, setValueInURL } from '@/features/value-from-url';
 import { captureGridToMatrix, centerGridWrapper, debounce, getGeneratorOptions } from '@/utils/dom-utils';
+import { decodeMatrix, encodeMatrix } from '@/utils/matrix-serializer';
 import { sanitizeInput } from '@/utils/sanitizer';
 
+// inject vercel insights (analytics) script if run on Vercel
+// VITE_IS_VERCEL is set in the Vercel project settings
 if (import.meta.env.VITE_IS_VERCEL === 'true') {
     const script = document.createElement('script');
     script.defer = true;
@@ -37,22 +40,9 @@ const setupSaveButton = () => {
     );
 };
 
-const setupMessageInput = () => {
-    const messageInput = document.getElementById('message-input') as HTMLInputElement;
-    const messageInputHandler = () => {
-        const message = sanitizeInput(messageInput.value.toUpperCase());
-        setValueInURL('value', message);
-    };
-    messageInput.addEventListener('input', messageInputHandler);
-    messageInput.addEventListener('paste', messageInputHandler);
-    messageInput.addEventListener('cut', messageInputHandler);
-
-    if (messageInput) {
-        const messageFromUrl = sanitizeInput(getValueFromURL('value'));
-        if (messageFromUrl) messageInput.value = messageFromUrl;
-    }
-};
-
+// fill-empty-squares-input checkox is used to define 
+// whether to fill empty squares with a random low level value or leave them empty
+// it's checked by default, but can be read from URL
 const setupFillEmptySquaresInput = () => {
     const fillEmptySquaresInput = document.getElementById('fill-empty-squares-input') as HTMLInputElement;
     if (fillEmptySquaresInput) {
@@ -68,9 +58,16 @@ const setupFillEmptySquaresInput = () => {
     }
 };
 
+// activate or deactivate draw mode on the grid
+// once in draw mode:
+// update current matrix state on grid painted event
+// and update the URL with the matrix value
 const setupDrawModeInput = () => {
     const drawMode = document.getElementById('draw-mode-input') as HTMLInputElement;
     const contributionGrid = document.getElementById('contribution-grid') as HTMLElement;
+    const debouncedSetValueInURL = debounce(() => {
+        setValueInURL('matrix', encodeMatrix(currentMatrixState.getMatrix() || []));        
+    }, 500);
     const gridPaintedHandler = (event: Event) => {                
         const customEvent = event as CustomEvent;
         if (customEvent && customEvent.type === 'painted' && customEvent.detail && customEvent.detail.square) {
@@ -87,7 +84,8 @@ const setupDrawModeInput = () => {
                 currentMatrixState.updateMatrix(rowIndex, colIndex, value);
             } else { // otherwise we need to update the whole grid            
                 currentMatrixState.setMatrix(captureGridToMatrix(selector));
-            }            
+            }
+            debouncedSetValueInURL(event); // debounce to avoid too many updates in URL
         }        
     };
 
@@ -102,6 +100,7 @@ const setupDrawModeInput = () => {
     });
 };
 
+// the buttons clears the grid and resets the matrix state
 const setupClearButton = () => {
     const clearButton = document.getElementById('clear-button');
     clearButton?.addEventListener('click', () => {
@@ -113,9 +112,11 @@ const setupClearButton = () => {
             valueAttrName: 'data-value'
         });
         currentMatrixState.resetMatrix();
+        setValueInURL('matrix', null);
     });
 };
 
+// everything is wrapped in a form to allow for easy submission (but to prevent default behavior)
 const setupForm = () => {
     const form = document.getElementById('form');
     form?.addEventListener('submit', (event) => {
@@ -125,6 +126,7 @@ const setupForm = () => {
     });
 };
 
+// share as an image or a link buttons
 const setupShareButtons = () => {
     const gridContainer = document.getElementById('grid-container') as HTMLElement;
     const shareImageButton = document.getElementById('share-image-button');
@@ -145,6 +147,7 @@ const setupShareButtons = () => {
     });
 };
 
+// add handlers for all inputs in the form at once
 const setupInputChangeHandlers = () => {
     const inputs = [
         'message-input',
@@ -167,6 +170,8 @@ const setupInputChangeHandlers = () => {
     });
 };
 
+// these are buttons with predefined matrices to draw from (like heart, smiley, etc.)
+// the button has to have a data-matrix attribute with the name of the matrix in the matrixMap module
 const setupMatricesButtons = () => {
     const matricesButtons = document.querySelectorAll('button[data-matrix]');
     matricesButtons.forEach((button) => {
@@ -182,11 +187,32 @@ const setupMatricesButtons = () => {
     });
 };
 
+// set initial value from URL
+const setupInitialValue = () => {    
+    const messageInput = document.getElementById('message-input') as HTMLInputElement;    
+    if (messageInput) {
+        const urlValue = getValueFromURL('value');        
+        if (typeof urlValue === 'string') {
+            const messageFromUrl = sanitizeInput(urlValue);
+            if (messageFromUrl) messageInput.value = messageFromUrl;
+        }
+    }
+};
+
+// decode the matrix from the URL and set it as the current matrix state
+const setupInitialMatrix = () => {
+    const matrixFromUrl = getValueFromURL('matrix');
+    const matrix = decodeMatrix(matrixFromUrl as string);
+    if (matrix && Array.isArray(matrix) && matrix.length > 0) {
+        currentMatrixState.setMatrix(matrix);        
+    }
+};
+
 // Initialize the controls and event listeners
 const initialize = () => {
     setupThemeToggle();
     setupSaveButton();
-    setupMessageInput();
+    setupInitialValue();
     setupFillEmptySquaresInput();
     setupDrawModeInput();    
     setupForm();
@@ -194,11 +220,12 @@ const initialize = () => {
     setupShareButtons();
     setupInputChangeHandlers();
     setupMatricesButtons();
+    setupInitialMatrix(); 
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {        
     // check that all required elements are present in the DOM
-    checkRequiredElements();
+    checkRequiredElements();    
     // initialize the event listeners and controls
     initialize();
     // generate the initial grid
@@ -206,20 +233,29 @@ document.addEventListener('DOMContentLoaded', () => {
     centerGridWrapper();
 });
 
-const updateGrid = (props? : {
-    input?: number[][];
-}) => {
-    const options = {
-        ...getGeneratorOptions(),
-        ...props
-    }
-    const currentMatrix = currentMatrixState.getMatrix();
-    if (!props && currentMatrix) {
+const updateGrid = (props?: { input: number[][] }) => {
+    const currentMatrix = currentMatrixState.getMatrix();        
+    const options = { ...getGeneratorOptions() };    
+    
+    if (props) { // foreced input from props
+        options.input = props.input;
+    } else if (currentMatrix) { // use current matrix if available
         options.input = currentMatrix;
+    } else { // otherwise the input from getGeneratorOptions is used, i.e. the message-input value
+        
     }
-    generateContributionGrid(options);    
+    // update the current matrix state with the input value
     currentMatrixState.setMatrix(options.input);
-}
+
+    // draw the grid with the current options
+    generateContributionGrid(options);    
+    
+    // update the URL with the current matrix value
+    setValueInURL('matrix', encodeMatrix(currentMatrixState.getMatrix() || []));
+    
+    // Clear the value from URL as we use matrix as input from here on
+    setValueInURL('value', null); 
+};
 
 const checkRequiredElements = () => {
     const requiredElements = [

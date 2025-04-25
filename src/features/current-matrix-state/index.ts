@@ -1,23 +1,44 @@
-class CurrentMatrixState {
-    private currentMatrix: number[][] | undefined | null = null;
+const createCurrentMatrixState = () => {
+    let currentMatrix: number[][] | undefined | null = null;
 
-    getMatrix(): number[][] | undefined | null {
-        return this.currentMatrix;
+    const getMatrix = () => {
+        return currentMatrix;
     }
 
-    setMatrix(matrix: number[][] | undefined | null): void {
-        this.currentMatrix = matrix;
+    const setMatrix = (matrix: number[][] | undefined | null): void => {
+        currentMatrix = matrix;
     }
 
-    updateMatrix(rowIndex: number, colIndex: number, value: number): void {
-        if (this.currentMatrix && this.currentMatrix[rowIndex] && this.currentMatrix[rowIndex][colIndex] !== undefined) {
-            this.currentMatrix[rowIndex][colIndex] = value;
+    const updateMatrix = (rowIndex: number, colIndex: number, value: number) => {
+        if (currentMatrix && currentMatrix[rowIndex] && currentMatrix[rowIndex][colIndex] !== undefined) {
+            currentMatrix[rowIndex][colIndex] = value;
         }
     }
 
-    resetMatrix(): void {
-        this.currentMatrix = null;
+    const resetMatrix = () => {
+        currentMatrix = null;
     }
+
+    const serializeMatrix = (): string | null => {
+        return currentMatrix ? JSON.stringify(currentMatrix) : null;
+    };
+
+    const deserializeMatrix = (serializedMatrix: string): void => {
+        try {
+            currentMatrix = JSON.parse(serializedMatrix);
+        } catch {
+            currentMatrix = null;
+        }
+    };
+
+    return {
+        getMatrix,
+        setMatrix,
+        updateMatrix,
+        resetMatrix,
+        serializeMatrix,
+        deserializeMatrix,
+    };
 }
 
-export const currentMatrixState = new CurrentMatrixState();
+export const currentMatrixState = createCurrentMatrixState();
