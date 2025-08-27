@@ -8,7 +8,7 @@ jobs:
     build:
         runs-on: [ubuntu-latest]
         steps:
-            - uses: actions/checkout@v4 # Check out the repository code
+            - uses: actions/checkout@v5 # Check out the repository code
             - uses: actions/setup-node@v4 # Set up Node.js environment
               with:
                   node-version: '22' # Specify Node.js version
